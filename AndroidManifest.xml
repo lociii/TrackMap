@@ -26,17 +26,26 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-sdk
+        android:minSdkVersion="7"
+        android:targetSdkVersion="18" />
     <application
         android:icon="@drawable/app_sample_code"
         android:label="@string/application_name" >
         <uses-library android:name="com.google.android.maps" />
         <activity
-            android:name=".RouteMapActivity"
-            android:label="RouteMap" >
+            android:name=".activities.Map"
+            android:label="RouteMap"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.Preferences"
+            android:label="Preferences" >
         </activity>
     </application>
 </manifest>

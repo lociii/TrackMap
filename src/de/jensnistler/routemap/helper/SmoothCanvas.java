@@ -1,4 +1,4 @@
-package de.jensnistler.routemap;
+package de.jensnistler.routemap.helper;
 
 import javax.microedition.khronos.opengles.GL;
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    <CheckBoxPreference
+        android:defaultValue="false"
+        android:key="standby"
+        android:summary="Deactivate standby while RouteMap is active"
+        android:title="Deactivate standby" />
+    <ListPreference
+        android:defaultValue="nochange"
+        android:entries="@array/listArray"
+        android:entryValues="@array/listValues"
+        android:key="brightness"
+        android:summary="Set brightness while RouteMap is active"
+        android:title="Brightness mode" />
+</PreferenceScreen>

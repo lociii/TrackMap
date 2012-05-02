@@ -1,14 +1,10 @@
-package de.jensnistler.routemap;
+package de.jensnistler.routemap.helper;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.MeasureSpec;
-import android.widget.ImageView;
 
 public class RouteMapViewGroup extends ViewGroup {
-    private static final float SQ2 = 1.414213562373095f;
-
     public RouteMapViewGroup(Context context) {
         super(context);
     }

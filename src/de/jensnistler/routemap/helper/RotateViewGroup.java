@@ -1,4 +1,6 @@
-package de.jensnistler.routemap;
+package de.jensnistler.routemap.helper;
+
+import de.jensnistler.routemap.helper.SmoothCanvas;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -8,7 +10,6 @@ import android.hardware.SensorEventListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import de.jensnistler.routemap.SmoothCanvas;
 
 public class RotateViewGroup extends ViewGroup implements SensorEventListener {
     private static final float SQ2 = 1.414213562373095f;

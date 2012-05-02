@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="listArray">
+        <item>Don\'t change</item>
+        <item>Automatic</item>
+        <item>Maximum</item>
+        <item>Medium</item>
+        <item>Low</item>
+    </string-array>
+    <string-array name="listValues">
+        <item>nochange</item>
+        <item>automatic</item>
+        <item>maximum</item>
+        <item>medium</item>
+        <item>low</item>
+    </string-array>
+</resources>
