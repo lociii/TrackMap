@@ -47,5 +47,9 @@
             android:name=".activities.Preferences"
             android:label="Preferences" >
         </activity>
+        <activity
+            android:name=".activities.LoadRouteFromSD"
+            android:label="Load route from SD-Card" >
+        </activity>
     </application>
 </manifest>

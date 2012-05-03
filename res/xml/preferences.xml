@@ -5,6 +5,11 @@
         android:key="standby"
         android:summary="Deactivate standby while RouteMap is active"
         android:title="Deactivate standby" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="rotateMap"
+        android:summary="Rotate map according to your direction of travel"
+        android:title="Rotate map" />
     <ListPreference
         android:defaultValue="nochange"
         android:entries="@array/listArray"

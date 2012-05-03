@@ -1,19 +1,24 @@
 package de.jensnistler.routemap.activities;
 
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
+
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 
 import de.jensnistler.routemap.R;
+import de.jensnistler.routemap.helper.GPXParser;
 import de.jensnistler.routemap.helper.RotateViewGroup;
 import de.jensnistler.routemap.helper.RouteMapViewGroup;
+import de.jensnistler.routemap.helper.DirectionPathOverlay;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
-import android.hardware.Sensor;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -31,7 +36,7 @@ import android.widget.Toast;
 
 public class Map extends MapActivity implements LocationListener {
     private static final int UPDATE_LOCATION = 1;
-    
+
     private static final String BRIGHTNESS_NOCHANGE = "nochange";
     private static final String BRIGHTNESS_AUTOMATIC = "automatic";
     private static final String BRIGHTNESS_MAXIMUM = "maximum";
@@ -39,11 +44,12 @@ public class Map extends MapActivity implements LocationListener {
     private static final String BRIGHTNESS_LOW = "low";
 
     private boolean mPreferenceStandby;
+    private boolean mPreferenceRotateMap;
     private String mPreferenceBrightness;
     private int mUserBrightnessMode;
     private float mUserBrightnessValue;
+    private String mPreferenceRouteFile;
 
-    private SensorManager mSensorManager;
     private MapView mMapView;
     private RotateViewGroup mMapViewGroup; 
     private RouteMapViewGroup mViewGroup;
@@ -53,10 +59,9 @@ public class Map extends MapActivity implements LocationListener {
     private Thread mThread;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         mViewGroup = new RouteMapViewGroup(this);
 
         // add map
@@ -88,7 +93,7 @@ public class Map extends MapActivity implements LocationListener {
     /**
      * load preferences on start
      */
-    public void onStart() {
+    protected void onStart() {
         // save user brightness
         try {
             mUserBrightnessMode = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);
@@ -100,10 +105,33 @@ public class Map extends MapActivity implements LocationListener {
         catch (Settings.SettingNotFoundException e) {
             // setting not found, default can not be restored
             mUserBrightnessMode = -1;
+            mUserBrightnessValue = -1.0f;
         }
 
         handlePreferences();
         super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        handlePreferences();
+        initializeLocationAndStartGpsThread();
+    }
+
+    @Override
+    protected void onStop() {
+        mThread.interrupt();
+
+        // reset standby mode
+        if (true == mPreferenceStandby) {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        // reset brightness to user default
+        restoreBrightness();
+
+        super.onStop();
     }
 
     /**
@@ -112,11 +140,32 @@ public class Map extends MapActivity implements LocationListener {
     private void handlePreferences() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         mPreferenceStandby = prefs.getBoolean("standby", false);
+        mPreferenceRotateMap = prefs.getBoolean("rotateMap", false);
         mPreferenceBrightness = prefs.getString("brightness", BRIGHTNESS_NOCHANGE).trim();
+        mPreferenceRouteFile = prefs.getString("routeFile", null);
 
         // disable standby
         if (true == mPreferenceStandby) {
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+
+        // disable map rotation
+        if (false == mPreferenceRotateMap) {
+            mMapViewGroup.setHeading(0.0f);
+        }
+
+        // load route file
+        if (null != mPreferenceRouteFile) {
+            File routeFile = new File(mPreferenceRouteFile.trim());
+            if (!routeFile.exists()) {
+                Toast.makeText(this, "Failed to load route file: " + mPreferenceRouteFile, Toast.LENGTH_LONG).show();
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putString("routeFile", null);
+                editor.commit();
+            }
+            else {
+                renderRouteFile(routeFile);
+            }
         }
 
         // restore user settings
@@ -126,25 +175,26 @@ public class Map extends MapActivity implements LocationListener {
         }
 
         // automatic mode
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
         if (mPreferenceBrightness.equals(BRIGHTNESS_AUTOMATIC)) {
             Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
-            return;
-        }
-
-        // manual mode
-        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-        if (mPreferenceBrightness.equals(BRIGHTNESS_MAXIMUM)) {
-            layoutParams.screenBrightness = 1.0f;
-        }
-        else if (mPreferenceBrightness.equals(BRIGHTNESS_MEDIUM)) {
-            layoutParams.screenBrightness = 0.6f;
-        }
-        else if (mPreferenceBrightness.equals(BRIGHTNESS_LOW)) {
-            layoutParams.screenBrightness = 0.2f;
-        }
-        else {
             layoutParams.screenBrightness = -1.0f;
+        }
+        // manual mode
+        else {
+            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
+            if (mPreferenceBrightness.equals(BRIGHTNESS_MAXIMUM)) {
+                layoutParams.screenBrightness = 1.0f;
+            }
+            else if (mPreferenceBrightness.equals(BRIGHTNESS_MEDIUM)) {
+                layoutParams.screenBrightness = 0.6f;
+            }
+            else if (mPreferenceBrightness.equals(BRIGHTNESS_LOW)) {
+                layoutParams.screenBrightness = 0.2f;
+            }
+            else {
+                layoutParams.screenBrightness = -1.0f;
+            }
         }
         getWindow().setAttributes(layoutParams);
     }
@@ -157,11 +207,9 @@ public class Map extends MapActivity implements LocationListener {
         }
 
         Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, mUserBrightnessMode);
-        if (Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL == mUserBrightnessMode) {
-            WindowManager.LayoutParams layout = getWindow().getAttributes();
-            layout.screenBrightness = mUserBrightnessValue;
-            getWindow().setAttributes(layout);
-        }
+        WindowManager.LayoutParams layout = getWindow().getAttributes();
+        layout.screenBrightness = mUserBrightnessValue;
+        getWindow().setAttributes(layout);
     }
 
     /**
@@ -196,37 +244,14 @@ public class Map extends MapActivity implements LocationListener {
             Message msg = Message.obtain();
             msg.what = UPDATE_LOCATION;
             de.jensnistler.routemap.activities.Map.this.updateHandler.sendMessage(msg);
+
+            // rotate map
+            if (true == mPreferenceRotateMap && location.hasBearing()) {
+                mMapViewGroup.setHeading(location.getBearing());
+            }
         } catch (NullPointerException e) {
             // don't update location
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mSensorManager.registerListener(mMapViewGroup,
-                mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_NORMAL);
-
-        handlePreferences();
-
-        initializeLocationAndStartGpsThread();
-    }
-
-    @Override
-    protected void onStop() {
-        mSensorManager.unregisterListener(mMapViewGroup);
-        mThread.interrupt();
-
-        // reset standby mode
-        if (true == mPreferenceStandby) {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-
-        // reset brightness to user default
-        restoreBrightness();
-
-        super.onStop();
     }
 
     /**
@@ -237,10 +262,10 @@ public class Map extends MapActivity implements LocationListener {
         // @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case UPDATE_LOCATION: {
-                    de.jensnistler.routemap.activities.Map.this.updateMyLocation();
-                    break;
-                }
+            case UPDATE_LOCATION: {
+                de.jensnistler.routemap.activities.Map.this.updateMyLocation();
+                break;
+            }
             }
             super.handleMessage(msg);
         }
@@ -310,6 +335,37 @@ public class Map extends MapActivity implements LocationListener {
         return false;
     }
 
+    private void renderRouteFile(File routeFile) {
+        List<Overlay> overlays = mMapView.getOverlays();
+        if (!overlays.isEmpty()) {
+            overlays.removeAll(overlays);
+        }
+
+        GPXParser parser = new GPXParser(routeFile);
+        List<List<Location>> tracks = parser.getTracks();
+
+        Iterator<List<Location>> trackIterator = tracks.iterator();
+        while (trackIterator.hasNext()) {
+            List<Location> waypoints = trackIterator.next();
+
+            Iterator<Location> waypointIterator = waypoints.iterator();
+            Location lastWaypoint = null;
+            while (waypointIterator.hasNext()) {
+                Location waypoint = waypointIterator.next();
+
+                if (null != lastWaypoint) {
+                    GeoPoint startGeoPoint = new GeoPoint((int) (lastWaypoint.getLatitude() * 1E6), (int) (lastWaypoint.getLongitude() * 1E6));
+                    GeoPoint targetGeoPoint = new GeoPoint((int) (waypoint.getLatitude() * 1E6), (int) (waypoint.getLongitude() * 1E6));
+
+                    DirectionPathOverlay overlay = new DirectionPathOverlay(startGeoPoint, targetGeoPoint);
+                    overlays.add(overlay);
+                }
+
+                lastWaypoint = waypoint;
+            }
+        }
+    }
+
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mainmenu, menu);
         return super.onCreateOptionsMenu(menu);
@@ -317,13 +373,16 @@ public class Map extends MapActivity implements LocationListener {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.mainmenu_settings:
-                Intent preferencesActivity = new Intent(getBaseContext(), Preferences.class);
-                startActivity(preferencesActivity);
-                return true;
-
-            default:
-                return super.onOptionsItemSelected(item);
+        case R.id.mainmenu_settings:
+            Intent preferencesActivity = new Intent(getBaseContext(), Preferences.class);
+            startActivity(preferencesActivity);
+            return true;
+        case R.id.mainmenu_loadfromsd:
+            Intent loadfromsdActivity = new Intent(getBaseContext(), LoadRouteFromSD.class);
+            startActivity(loadfromsdActivity);
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
 }

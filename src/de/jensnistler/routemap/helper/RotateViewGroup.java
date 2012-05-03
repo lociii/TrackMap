@@ -4,14 +4,11 @@ import de.jensnistler.routemap.helper.SmoothCanvas;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class RotateViewGroup extends ViewGroup implements SensorEventListener {
+public class RotateViewGroup extends ViewGroup {
     private static final float SQ2 = 1.414213562373095f;
     private final SmoothCanvas mCanvas = new SmoothCanvas();
     private float mHeading = 0;
@@ -20,9 +17,9 @@ public class RotateViewGroup extends ViewGroup implements SensorEventListener {
         super(context);
     }
 
-    public void onSensorChanged(SensorEvent event) {
+    public void setHeading(float heading) {
         synchronized (this) {
-            mHeading = event.values[0];
+            mHeading = heading;
             invalidate();
         }
     }
@@ -71,9 +68,5 @@ public class RotateViewGroup extends ViewGroup implements SensorEventListener {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         return super.dispatchTouchEvent(ev);
-    }
-
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // ignore
     }
 }
