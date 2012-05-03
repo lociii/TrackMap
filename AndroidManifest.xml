@@ -31,7 +31,7 @@
         android:minSdkVersion="7"
         android:targetSdkVersion="18" />
     <application
-        android:icon="@drawable/app_sample_code"
+        android:icon="@drawable/application"
         android:label="@string/application_name" >
         <uses-library android:name="com.google.android.maps" />
         <activity
