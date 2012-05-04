@@ -226,10 +226,8 @@ public class Map extends MapActivity implements LocationListener {
     private void setCurrentGpsLocation(Location location) {
         if (location == null) {
             mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            mLocationManager.requestLocationUpdates(
-                    LocationManager.GPS_PROVIDER, 500, 0, this);
-            location = mLocationManager
-                    .getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
+            location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
 
         try {
