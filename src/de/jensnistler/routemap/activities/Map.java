@@ -32,6 +32,7 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 public class Map extends MapActivity implements LocationListener {
@@ -52,6 +53,7 @@ public class Map extends MapActivity implements LocationListener {
     private MapView mMapView;
     private RotateViewGroup mMapViewGroup; 
     private RouteMapViewGroup mViewGroup;
+    private RelativeLayout mImageViewGroup;
     private LocationManager mLocationManager;
     private double mLatitude;
     private double mLongitude;
@@ -76,14 +78,28 @@ public class Map extends MapActivity implements LocationListener {
         mMapViewGroup.addView(mMapView);
         mViewGroup.addView(mMapViewGroup);
 
-        // add position marker
-        LayoutParams params = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-        ImageView imageview = new ImageView(this);
-        imageview.setScaleType(ImageView.ScaleType.CENTER);
-        Drawable drawable = this.getResources().getDrawable(R.drawable.mymarker);
-        imageview.setImageDrawable(drawable);
-        imageview.setLayoutParams(params);
-        mViewGroup.addView(imageview);
+        // position marker
+        LayoutParams positionViewLayout = new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
+        ImageView positionImageView = new ImageView(this);
+        positionImageView.setScaleType(ImageView.ScaleType.CENTER);
+        Drawable positionDrawable = this.getResources().getDrawable(R.drawable.mymarker);
+        positionImageView.setImageDrawable(positionDrawable);
+
+        // google logo on map, original is out of sight
+        ImageView googleLogoImageView = new ImageView(this);
+        googleLogoImageView.setScaleType(ImageView.ScaleType.CENTER);
+        Drawable googleLogoDrawable = this.getResources().getDrawable(R.drawable.google);
+        googleLogoImageView.setImageDrawable(googleLogoDrawable);
+        RelativeLayout.LayoutParams googleLogoViewLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        googleLogoViewLayout.leftMargin = 20;
+        googleLogoViewLayout.bottomMargin = 20;
+        googleLogoViewLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+
+        // add image view to main view
+        mImageViewGroup = new RelativeLayout(this);
+        mImageViewGroup.addView(positionImageView, positionViewLayout);
+        mImageViewGroup.addView(googleLogoImageView, googleLogoViewLayout);
+        mViewGroup.addView(mImageViewGroup);
 
         // set content view
         setContentView(mViewGroup);
