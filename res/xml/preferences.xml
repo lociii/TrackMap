@@ -15,6 +15,6 @@
         android:entries="@array/listArray"
         android:entryValues="@array/listValues"
         android:key="brightness"
-        android:summary="Set brightness while RouteMap is active"
+        android:summary="Set brightness while the map is visible"
         android:title="Brightness mode" />
 </PreferenceScreen>
