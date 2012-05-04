@@ -1,6 +1,7 @@
 package de.jensnistler.routemap.activities;
 
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,10 +45,14 @@ public class Map extends MapActivity implements LocationListener {
     private static final String BRIGHTNESS_MEDIUM = "medium";
     private static final String BRIGHTNESS_LOW = "low";
 
+    private static final String DISTANCE_MILES = "mi";
+    private static final String DISTANCE_KILOMETERS = "km";
+
     private boolean mPreferenceStandby;
     private boolean mPreferenceRotateMap;
     private String mPreferenceBrightness;
     private String mPreferenceRouteFile;
+    private String mPreferenceDistanceUnit;
     private int mUserBrightnessMode;
 
     private MapView mMapView;
@@ -115,6 +120,7 @@ public class Map extends MapActivity implements LocationListener {
         mPreferenceRotateMap = prefs.getBoolean("rotateMap", false);
         mPreferenceBrightness = prefs.getString("brightness", BRIGHTNESS_NOCHANGE).trim();
         mPreferenceRouteFile = prefs.getString("routeFile", null);
+        mPreferenceDistanceUnit = prefs.getString("mPreferenceDistanceUnit", DISTANCE_MILES);
 
         // save user brightness
         try {
@@ -244,6 +250,8 @@ public class Map extends MapActivity implements LocationListener {
             mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+            setTitle("Waiting for GPS signal...");
         }
 
         try {
@@ -256,6 +264,31 @@ public class Map extends MapActivity implements LocationListener {
             // rotate map
             if (true == mPreferenceRotateMap && location.hasBearing()) {
                 mMapViewGroup.setHeading(location.getBearing());
+            }
+
+            // show speed in activity title
+            if (true == location.hasSpeed()) {
+                // meters per second
+                float speed = location.getSpeed();
+                // meters per hour
+                speed = speed * 60 * 60;
+                // kilometers per hour
+                speed = speed / 1000;
+
+                // reduce to miles
+                if (DISTANCE_MILES == mPreferenceDistanceUnit) {
+                    speed = speed / 1.609344f;
+                }
+
+                String speedText = new DecimalFormat("###.##").format(speed);
+                if (DISTANCE_MILES == mPreferenceDistanceUnit) {
+                    speedText = speedText + " mph";
+                }
+                else if (DISTANCE_KILOMETERS == mPreferenceDistanceUnit) {
+                    speedText = speedText + " km/h";
+                }
+
+                setTitle(speedText);
             }
         } catch (NullPointerException e) {
             // don't update location

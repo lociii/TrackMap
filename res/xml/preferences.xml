@@ -12,9 +12,16 @@
         android:title="Rotate map" />
     <ListPreference
         android:defaultValue="nochange"
-        android:entries="@array/listArray"
-        android:entryValues="@array/listValues"
+        android:entries="@array/brightnessLabels"
+        android:entryValues="@array/brightnessValues"
         android:key="brightness"
         android:summary="Set brightness while the map is visible"
         android:title="Brightness mode" />
+    <ListPreference
+        android:defaultValue="mi"
+        android:entries="@array/speedLabels"
+        android:entryValues="@array/speedValues"
+        android:key="speed"
+        android:summary="Select the unit in which you would like to see distance values"
+        android:title="Distance unit" />
 </PreferenceScreen>

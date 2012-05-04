@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string-array name="listArray">
+    <string-array name="brightnessLabels">
         <item>Don\'t change</item>
         <item>Automatic</item>
         <item>Maximum</item>
         <item>Medium</item>
         <item>Low</item>
     </string-array>
-    <string-array name="listValues">
+    <string-array name="brightnessValues">
         <item>nochange</item>
         <item>automatic</item>
         <item>maximum</item>
         <item>medium</item>
         <item>low</item>
+    </string-array>
+    <string-array name="speedLabels">
+        <item>Kilometers</item>
+        <item>Miles</item>
+    </string-array>
+    <string-array name="speedValues">
+        <item>km</item>
+        <item>mi</item>
     </string-array>
 </resources>
