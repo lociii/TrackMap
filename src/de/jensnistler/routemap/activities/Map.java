@@ -30,8 +30,10 @@ import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.FrameLayout.LayoutParams;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -47,6 +49,9 @@ public class Map extends MapActivity implements LocationListener {
 
     private static final String DISTANCE_MILES = "mi";
     private static final String DISTANCE_KILOMETERS = "km";
+    
+    private static final int ID_ZOOM_IN = 1;
+    private static final int ID_ZOOM_OUT = 2;
 
     private boolean mPreferenceStandby;
     private boolean mPreferenceRotateMap;
@@ -100,10 +105,42 @@ public class Map extends MapActivity implements LocationListener {
         googleLogoViewLayout.bottomMargin = 20;
         googleLogoViewLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 
+        // zoom out
+        ImageButton zoomOut = new ImageButton(this);
+        zoomOut.setImageResource(R.drawable.minus);
+        zoomOut.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mMapView.getController().zoomOut();
+            }
+        });
+        zoomOut.setId(ID_ZOOM_IN);
+        RelativeLayout.LayoutParams zoomOutViewLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        zoomOutViewLayout.rightMargin = 20;
+        zoomOutViewLayout.bottomMargin = 20;
+        zoomOutViewLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        zoomOutViewLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+
+        // zoom in
+        ImageButton zoomIn = new ImageButton(this);
+        zoomIn.setImageResource(R.drawable.plus);
+        zoomIn.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                mMapView.getController().zoomIn();
+            }
+        });
+        zoomIn.setId(ID_ZOOM_OUT);
+        RelativeLayout.LayoutParams zoomInViewLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+        zoomInViewLayout.rightMargin = 20;
+        zoomInViewLayout.bottomMargin = 20;
+        zoomInViewLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        zoomInViewLayout.addRule(RelativeLayout.LEFT_OF, zoomOut.getId());
+
         // add image view to main view
         mImageViewGroup = new RelativeLayout(this);
         mImageViewGroup.addView(positionImageView, positionViewLayout);
         mImageViewGroup.addView(googleLogoImageView, googleLogoViewLayout);
+        mImageViewGroup.addView(zoomOut, zoomOutViewLayout);
+        mImageViewGroup.addView(zoomIn, zoomInViewLayout);
         mViewGroup.addView(mImageViewGroup);
 
         // set content view
@@ -120,7 +157,7 @@ public class Map extends MapActivity implements LocationListener {
         mPreferenceRotateMap = prefs.getBoolean("rotateMap", false);
         mPreferenceBrightness = prefs.getString("brightness", BRIGHTNESS_NOCHANGE).trim();
         mPreferenceRouteFile = prefs.getString("routeFile", null);
-        mPreferenceDistanceUnit = prefs.getString("mPreferenceDistanceUnit", DISTANCE_MILES);
+        mPreferenceDistanceUnit = prefs.getString("speed", DISTANCE_MILES);
 
         // save user brightness
         try {
