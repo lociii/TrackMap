@@ -276,15 +276,15 @@ public class Map extends MapActivity implements LocationListener {
                 speed = speed / 1000;
 
                 // reduce to miles
-                if (DISTANCE_MILES == mPreferenceDistanceUnit) {
+                if (mPreferenceDistanceUnit.equals(DISTANCE_MILES)) {
                     speed = speed / 1.609344f;
                 }
 
                 String speedText = new DecimalFormat("###.##").format(speed);
-                if (DISTANCE_MILES == mPreferenceDistanceUnit) {
+                if (mPreferenceDistanceUnit.equals(DISTANCE_MILES)) {
                     speedText = speedText + " mph";
                 }
-                else if (DISTANCE_KILOMETERS == mPreferenceDistanceUnit) {
+                else if (mPreferenceDistanceUnit.equals(DISTANCE_KILOMETERS)) {
                     speedText = speedText + " km/h";
                 }
 
@@ -335,8 +335,7 @@ public class Map extends MapActivity implements LocationListener {
      * move map to my current location
      */
     private void updateMyLocation() {
-        GeoPoint point = new GeoPoint((int) (mLatitude * 1E6),
-                (int) (mLongitude * 1E6));
+        GeoPoint point = new GeoPoint((int) (mLatitude * 1E6), (int) (mLongitude * 1E6));
 
         MapController mapController = mMapView.getController();
         mapController.animateTo(point);
