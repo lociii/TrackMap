@@ -16,4 +16,5 @@
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="application_name">RouteMap</string>
+    <string name="no_maps">No maps found</string>
 </resources>

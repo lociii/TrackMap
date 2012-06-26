@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/menu_updatemaps"
+        android:alphabeticShortcut="U"
+        android:checkable="false"
+        android:checked="false"
+        android:enabled="true"
+        android:numericShortcut="1"
+        android:title="Update map list"
+        android:titleCondensed="Update list"
+        android:visible="true">
+    </item>
+</menu>

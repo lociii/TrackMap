@@ -26,23 +26,40 @@
     android:versionCode="1"
     android:versionName="1.0" >
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-feature
+        android:name="android.hardware.location.gps"
+        android:required="true" />
+    <uses-feature
+        android:name="android.hardware.wifi"
+        android:required="false" />
     <uses-sdk
-        android:minSdkVersion="7"
+        android:minSdkVersion="8"
         android:targetSdkVersion="18" />
     <application
         android:icon="@drawable/application"
         android:label="@string/application_name" >
-        <uses-library android:name="com.google.android.maps" />
+        <!-- <uses-library android:name="com.google.android.maps" /> -->
         <activity
-            android:name=".activities.Map"
+            android:name=".activities.Main"
             android:label="RouteMap"
             android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.MapMapsForge"
+            android:label="RouteMap" >
+        </activity>
+        <activity
+            android:name=".activities.ManageMaps"
+            android:label="Manage maps" >
         </activity>
         <activity
             android:name=".activities.Preferences"

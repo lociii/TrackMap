@@ -3,8 +3,6 @@ package de.jensnistler.routemap.activities;
 import java.io.File;
 import java.util.ArrayList;
 
-import de.jensnistler.routemap.helper.FilenameFilterRoutes;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +12,7 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import de.jensnistler.routemap.helper.FilenameFilterRoutes;
 
 public class LoadRouteFromSD extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
@@ -46,8 +45,8 @@ public class LoadRouteFromSD extends ListActivity {
         editor.putString("routeFile", selection);
         editor.commit();
 
-        Intent mapActivity = new Intent(getBaseContext(), Map.class);
-        startActivity(mapActivity);
+        Intent mainActivity = new Intent(getBaseContext(), Main.class);
+        startActivity(mainActivity);
     }
 
     public void recursiveFileFind(File[] source, ArrayList<String> hits){

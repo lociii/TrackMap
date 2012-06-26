@@ -1,7 +1,5 @@
 package de.jensnistler.routemap.helper;
 
-import de.jensnistler.routemap.helper.SmoothCanvas;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.view.MotionEvent;

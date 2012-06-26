@@ -1,8 +1,8 @@
 package de.jensnistler.routemap.activities;
 
-import de.jensnistler.routemap.R;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
+import de.jensnistler.routemap.R;
 
 public class Preferences extends PreferenceActivity {
     @Override

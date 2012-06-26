@@ -5,18 +5,7 @@ import java.text.DecimalFormat;
 import java.util.Iterator;
 import java.util.List;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapActivity;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
-import com.google.android.maps.Overlay;
-
-import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.helper.GPXParser;
-import de.jensnistler.routemap.helper.RotateViewGroup;
-import de.jensnistler.routemap.helper.RouteMapViewGroup;
-import de.jensnistler.routemap.helper.DirectionPathOverlay;
-
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
@@ -38,7 +27,19 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-public class Map extends MapActivity implements LocationListener {
+import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
+import org.osmdroid.util.GeoPoint;
+import org.osmdroid.views.MapController;
+import org.osmdroid.views.MapView;
+import org.osmdroid.views.overlay.Overlay;
+
+import de.jensnistler.routemap.R;
+import de.jensnistler.routemap.helper.GPXParser;
+import de.jensnistler.routemap.helper.OSMDirectionPathOverlay;
+import de.jensnistler.routemap.helper.RotateViewGroup;
+import de.jensnistler.routemap.helper.RouteMapViewGroup;
+
+public class MapOSM extends Activity implements LocationListener {
     private static final int UPDATE_LOCATION = 1;
 
     private static final String BRIGHTNESS_NOCHANGE = "nochange";
@@ -76,11 +77,10 @@ public class Map extends MapActivity implements LocationListener {
         mViewGroup = new RouteMapViewGroup(this);
 
         // add map
-        mMapView = new MapView(this, "0jeqOULMZgwc-uSv37wipOJh6umeCscVH48yV9Q");
+        mMapView = new MapView(this, 256);
         mMapView.getController().setZoom(18);
-        mMapView.setBuiltInZoomControls(true);
-        mMapView.setSatellite(false);
-        mMapView.setTraffic(false);
+        mMapView.setBuiltInZoomControls(false);
+        mMapView.setTileSource(TileSourceFactory.CYCLEMAP);
         mMapView.setEnabled(true);
 
         // rotate view
@@ -95,22 +95,13 @@ public class Map extends MapActivity implements LocationListener {
         Drawable positionDrawable = this.getResources().getDrawable(R.drawable.mymarker);
         positionImageView.setImageDrawable(positionDrawable);
 
-        // google logo on map, original is out of sight
-        ImageView googleLogoImageView = new ImageView(this);
-        googleLogoImageView.setScaleType(ImageView.ScaleType.CENTER);
-        Drawable googleLogoDrawable = this.getResources().getDrawable(R.drawable.google);
-        googleLogoImageView.setImageDrawable(googleLogoDrawable);
-        RelativeLayout.LayoutParams googleLogoViewLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        googleLogoViewLayout.leftMargin = 20;
-        googleLogoViewLayout.bottomMargin = 20;
-        googleLogoViewLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-
         // zoom out
         ImageButton zoomOut = new ImageButton(this);
         zoomOut.setImageResource(R.drawable.minus);
         zoomOut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mMapView.getController().zoomOut();
+                mMapView.invalidate();
             }
         });
         zoomOut.setId(ID_ZOOM_IN);
@@ -126,6 +117,7 @@ public class Map extends MapActivity implements LocationListener {
         zoomIn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 mMapView.getController().zoomIn();
+                mMapView.invalidate();
             }
         });
         zoomIn.setId(ID_ZOOM_OUT);
@@ -138,7 +130,6 @@ public class Map extends MapActivity implements LocationListener {
         // add image view to main view
         mImageViewGroup = new RelativeLayout(this);
         mImageViewGroup.addView(positionImageView, positionViewLayout);
-        mImageViewGroup.addView(googleLogoImageView, googleLogoViewLayout);
         mImageViewGroup.addView(zoomOut, zoomOutViewLayout);
         mImageViewGroup.addView(zoomIn, zoomInViewLayout);
         mViewGroup.addView(mImageViewGroup);
@@ -203,6 +194,7 @@ public class Map extends MapActivity implements LocationListener {
 
         super.onPause();
     }
+
 
     private void loadRouteFile() {
         // load route file
@@ -296,7 +288,7 @@ public class Map extends MapActivity implements LocationListener {
             mLatitude = location.getLatitude();
             Message msg = Message.obtain();
             msg.what = UPDATE_LOCATION;
-            de.jensnistler.routemap.activities.Map.this.updateHandler.sendMessage(msg);
+            de.jensnistler.routemap.activities.MapOSM.this.updateHandler.sendMessage(msg);
 
             // rotate map
             if (true == mPreferenceRotateMap && location.hasBearing()) {
@@ -341,7 +333,7 @@ public class Map extends MapActivity implements LocationListener {
         public void handleMessage(Message msg) {
             switch (msg.what) {
             case UPDATE_LOCATION: {
-                de.jensnistler.routemap.activities.Map.this.updateMyLocation();
+                de.jensnistler.routemap.activities.MapOSM.this.updateMyLocation();
                 break;
             }
             }
@@ -358,7 +350,7 @@ public class Map extends MapActivity implements LocationListener {
             while (!Thread.currentThread().isInterrupted()) {
                 Message m = Message.obtain();
                 m.what = 0;
-                de.jensnistler.routemap.activities.Map.this.updateHandler.sendMessage(m);
+                de.jensnistler.routemap.activities.MapOSM.this.updateHandler.sendMessage(m);
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
@@ -376,6 +368,7 @@ public class Map extends MapActivity implements LocationListener {
 
         MapController mapController = mMapView.getController();
         mapController.animateTo(point);
+        mMapView.invalidate();
     }
 
     /**
@@ -407,7 +400,6 @@ public class Map extends MapActivity implements LocationListener {
         setCurrentGpsLocation(null);
     }
 
-    @Override
     protected boolean isRouteDisplayed() {
         return false;
     }
@@ -434,7 +426,7 @@ public class Map extends MapActivity implements LocationListener {
                     GeoPoint startGeoPoint = new GeoPoint((int) (lastWaypoint.getLatitude() * 1E6), (int) (lastWaypoint.getLongitude() * 1E6));
                     GeoPoint targetGeoPoint = new GeoPoint((int) (waypoint.getLatitude() * 1E6), (int) (waypoint.getLongitude() * 1E6));
 
-                    DirectionPathOverlay overlay = new DirectionPathOverlay(startGeoPoint, targetGeoPoint);
+                    OSMDirectionPathOverlay overlay = new OSMDirectionPathOverlay(this, startGeoPoint, targetGeoPoint);
                     overlays.add(overlay);
                 }
 
@@ -450,11 +442,11 @@ public class Map extends MapActivity implements LocationListener {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.mainmenu_settings:
+        case R.id.menu_settings:
             Intent preferencesActivity = new Intent(getBaseContext(), Preferences.class);
             startActivity(preferencesActivity);
             return true;
-        case R.id.mainmenu_loadfromsd:
+        case R.id.menu_loadfromsd:
             Intent loadfromsdActivity = new Intent(getBaseContext(), LoadRouteFromSD.class);
             startActivity(loadfromsdActivity);
             return true;

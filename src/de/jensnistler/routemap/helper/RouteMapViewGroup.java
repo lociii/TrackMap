@@ -32,5 +32,4 @@ public class RouteMapViewGroup extends ViewGroup {
         }
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
     }
-
 }
