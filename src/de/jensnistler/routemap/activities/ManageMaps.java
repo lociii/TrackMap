@@ -22,6 +22,8 @@ import org.json.JSONObject;
 import android.app.ListActivity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -122,6 +124,7 @@ public class ManageMaps extends ListActivity {
             mAdapter.setNotifyOnChange(false);
             mAdapter.clear();
 
+            mDialog.setCancelable(false);
             mDialog.setMessage("Loading map list...");
             mDialog.show();
         }
@@ -196,15 +199,25 @@ public class ManageMaps extends ListActivity {
 
     private class DownloadMap extends AsyncTask<MapModel, Integer, Integer> {
         private final ProgressDialog mDialog = new ProgressDialog(ManageMaps.this);
+        private boolean mRunning = true;
 
         protected void onPreExecute() {
             mAdapter.setNotifyOnChange(false);
 
             mDialog.setMessage("Downloading map...");
-            mDialog.setCancelable(false);
+            mDialog.setCancelable(true);
             mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
             mDialog.setProgress(0);
+            mDialog.setOnCancelListener(new OnCancelListener() {
+                public void onCancel(DialogInterface dialog) {
+                    onCancelled();
+                }
+            });
             mDialog.show();
+        }
+
+        protected void onCancelled() {
+            mRunning = false;
         }
 
         protected Integer doInBackground(MapModel... maps) {
@@ -234,7 +247,7 @@ public class ManageMaps extends ListActivity {
                     byte[] buffer = new byte[1024];
                     int bufferLength = 0;
 
-                    while ((bufferLength = inputStream.read(buffer)) > 0) {
+                    while (true == mRunning && (bufferLength = inputStream.read(buffer)) > 0) {
                         fileOutput.write(buffer, 0, bufferLength);
                         downloadedSize += bufferLength;
 
@@ -242,7 +255,14 @@ public class ManageMaps extends ListActivity {
                     }
 
                     //close the output stream when done
+                    urlConnection.disconnect();
                     fileOutput.close();
+
+                    // file was not downloaded completely
+                    if (downloadedSize < totalSize) {
+                        cacheFile.delete();
+                        continue;
+                    }
 
                     // update map dataset
                     mAdapter.remove(map);
