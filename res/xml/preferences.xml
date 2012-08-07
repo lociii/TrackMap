@@ -8,20 +8,20 @@
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="rotateMap"
-        android:summary="Rotate map according to your direction of travel"
+        android:summary="Rotate map according to direction of travel"
         android:title="Rotate map" />
     <ListPreference
         android:defaultValue="nochange"
         android:entries="@array/brightnessLabels"
         android:entryValues="@array/brightnessValues"
         android:key="brightness"
-        android:summary="Set brightness while the map is visible"
-        android:title="Brightness mode" />
+        android:summary="Screen brightness while the map is visible"
+        android:title="Brightness" />
     <ListPreference
         android:defaultValue="mi"
-        android:entries="@array/speedLabels"
-        android:entryValues="@array/speedValues"
-        android:key="speed"
-        android:summary="Select the unit in which you would like to see distance values"
+        android:entries="@array/distanceLabels"
+        android:entryValues="@array/distanceValues"
+        android:key="distance"
+        android:summary="The unit type to calculate distances in"
         android:title="Distance unit" />
 </PreferenceScreen>

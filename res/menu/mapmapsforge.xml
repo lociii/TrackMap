@@ -7,8 +7,8 @@
         android:checked="false"
         android:enabled="true"
         android:numericShortcut="1"
-        android:title="Preferences"
-        android:titleCondensed="Preferences"
+        android:title="Settings"
+        android:titleCondensed="Settings"
         android:visible="true">
     </item>
     <item
@@ -31,6 +31,17 @@
         android:numericShortcut="3"
         android:title="Load route from SD-Card"
         android:titleCondensed="Load from SD"
+        android:visible="true">
+    </item>
+    <item
+        android:id="@+id/menu_loadfromtoursprung"
+        android:alphabeticShortcut="T"
+        android:checkable="false"
+        android:checked="false"
+        android:enabled="true"
+        android:numericShortcut="4"
+        android:title="Load route from Toursprung"
+        android:titleCondensed="Load from Toursprung"
         android:visible="true">
     </item>
 </menu>

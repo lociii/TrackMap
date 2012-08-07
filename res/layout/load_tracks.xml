@@ -4,12 +4,12 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
     <ListView
-        android:id="@+id/maplist"
+        android:id="@android:id/list"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
     <TextView
-        android:id="@+id/android:empty"
+        android:id="@android:id/empty"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:text="@string/no_maps" />
+        android:text="@string/no_tracks" />
 </LinearLayout>

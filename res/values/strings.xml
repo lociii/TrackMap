@@ -17,4 +17,14 @@
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="application_name">RouteMap</string>
     <string name="no_maps">No maps found</string>
+    <string name="no_tracks">No tracks found</string>
+    <string name="toursprung_bikemap">BikeMap</string>
+    <string name="toursprung_inlinemap">InlineMap</string>
+    <string name="toursprung_mopedmap">MopedMap</string>
+    <string name="toursprung_runmap">RunMap</string>
+    <string name="toursprung_wandermap">WanderMap</string>
+    <string name="toursprung_settings">Toursprung Settings</string>
+    <string name="service">Service</string>
+    <string name="username">Username</string>
+    <string name="save">Speichern</string>
 </resources>

@@ -29,7 +29,6 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
@@ -44,11 +43,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.helper.MapDataSource;
+import de.jensnistler.routemap.helper.DataSourceMap;
 import de.jensnistler.routemap.helper.MapModel;
 
 public class ManageMaps extends ListActivity {
-    private MapDataSource mDatasource;
+    private DataSourceMap mDatasource;
     private MapAdapter mAdapter;
 
     private class MapAdapter extends ArrayAdapter<MapModel> {
@@ -80,7 +79,7 @@ public class ManageMaps extends ListActivity {
             View v = convertView;
             if (v == null) {
                 LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                v = vi.inflate(R.layout.load_map_row, null);
+                v = vi.inflate(R.layout.manage_maps_row, null);
             }
             MapModel map = items.get(position);
             if (map != null) {
@@ -91,19 +90,13 @@ public class ManageMaps extends ListActivity {
                     tt.setText(map.getDescription());
                 }
                 if (bt != null){
-                    bt.setText("Size: " + map.getSize() + " MB");
+                    bt.setText(map.getSize() + " MB");
                 }
                 if (ic != null) {
-                    Log.i("Map", map.getKey() + " - " + map.getDate() + " / " + map.getUpdated());
-
                     if (0 == map.getUpdated()) {
                         ic.setImageDrawable(this.context.getResources().getDrawable(R.drawable.map_add));
                     }
                     else {
-                        Log.i("Date", map.getDescription());
-                        Log.i("Updated", map.getUpdated() + "");
-                        Log.i("Date", map.getDate() + "");
-                        
                         if (map.getUpdated() >= map.getDate()) {
                             ic.setImageDrawable(this.context.getResources().getDrawable(R.drawable.map_ok));
                         }
@@ -233,6 +226,7 @@ public class ManageMaps extends ListActivity {
 
                     File cacheDir = getExternalCacheDir();
                     if (null == cacheDir || !cacheDir.canWrite()) {
+                        publishProgress(0, 0);
                         continue;
                     }
                     File cacheFile = new File(cacheDir, map.getKey().replace("/", "_") + ".map");
@@ -287,6 +281,10 @@ public class ManageMaps extends ListActivity {
         }
 
         protected void onProgressUpdate(Integer... progress) {
+            if (0 == progress[0]) {
+                Toast.makeText(getApplicationContext(), "Cannot write to cache dir", Toast.LENGTH_LONG).show();
+            }
+
             mDialog.setMax(progress[0]);
             mDialog.setProgress(progress[1]);
         }
@@ -303,25 +301,26 @@ public class ManageMaps extends ListActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.manage_maps);
 
-        mDatasource = new MapDataSource(this);
+        mDatasource = new DataSourceMap(this);
         mDatasource.open();
 
         ArrayList<MapModel> values = mDatasource.getAllMaps();
-        mAdapter = new MapAdapter (
+        mAdapter = new MapAdapter(
             this,
             android.R.layout.simple_list_item_1,
             values
         );
 
-        ListView list = getListView();
-        list.setAdapter(mAdapter);
+        ListView listView = (ListView) findViewById(android.R.id.list);
+        listView.setAdapter(mAdapter);
 
         if (values.isEmpty()) {
             new UpdateMapList().execute("http://static.jensnistler.de/maps.json");
         }
 
-        registerForContextMenu(list);
+        registerForContextMenu(listView);
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {

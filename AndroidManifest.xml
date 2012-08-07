@@ -39,11 +39,10 @@
         android:required="false" />
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="18" />
+        android:targetSdkVersion="8" />
     <application
         android:icon="@drawable/application"
         android:label="@string/application_name" >
-        <!-- <uses-library android:name="com.google.android.maps" /> -->
         <activity
             android:name=".activities.Main"
             android:label="RouteMap"
@@ -55,7 +54,8 @@
         </activity>
         <activity
             android:name=".activities.MapMapsForge"
-            android:label="RouteMap" >
+            android:label="RouteMap"
+            android:launchMode="singleTask" >
         </activity>
         <activity
             android:name=".activities.ManageMaps"
@@ -68,6 +68,10 @@
         <activity
             android:name=".activities.LoadRouteFromSD"
             android:label="Load route from SD-Card" >
+        </activity>
+        <activity
+            android:name=".activities.LoadRouteFromToursprung"
+            android:label="Load track from Toursrpung" >
         </activity>
     </application>
 </manifest>

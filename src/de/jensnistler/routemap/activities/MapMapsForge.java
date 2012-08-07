@@ -2,17 +2,20 @@ package de.jensnistler.routemap.activities;
 
 import java.io.File;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import org.mapsforge.android.maps.MapActivity;
-import org.mapsforge.android.maps.MapController;
 import org.mapsforge.android.maps.MapView;
-import org.mapsforge.android.maps.overlay.ArrayWayOverlay;
+import org.mapsforge.android.maps.MapViewPosition;
+import org.mapsforge.android.maps.overlay.ListOverlay;
 import org.mapsforge.android.maps.overlay.Overlay;
-import org.mapsforge.android.maps.overlay.OverlayWay;
-import org.mapsforge.android.maps.rendertheme.InternalRenderTheme;
-import org.mapsforge.core.GeoPoint;
+import org.mapsforge.android.maps.overlay.OverlayItem;
+import org.mapsforge.android.maps.overlay.PolygonalChain;
+import org.mapsforge.android.maps.overlay.Polyline;
+import org.mapsforge.core.model.GeoPoint;
+import org.mapsforge.core.model.MapPosition;
 import org.mapsforge.map.reader.header.FileOpenResult;
 
 import android.content.Intent;
@@ -45,15 +48,15 @@ import de.jensnistler.routemap.helper.RouteMapViewGroup;
 public class MapMapsForge extends MapActivity implements LocationListener {
     private static final int UPDATE_LOCATION = 1;
 
-    private static final String BRIGHTNESS_NOCHANGE = "nochange";
-    private static final String BRIGHTNESS_AUTOMATIC = "automatic";
-    private static final String BRIGHTNESS_MAXIMUM = "maximum";
-    private static final String BRIGHTNESS_MEDIUM = "medium";
-    private static final String BRIGHTNESS_LOW = "low";
+    public static final String BRIGHTNESS_NOCHANGE = "nochange";
+    public static final String BRIGHTNESS_AUTOMATIC = "automatic";
+    public static final String BRIGHTNESS_MAXIMUM = "maximum";
+    public static final String BRIGHTNESS_MEDIUM = "medium";
+    public static final String BRIGHTNESS_LOW = "low";
 
-    private static final String DISTANCE_MILES = "mi";
-    private static final String DISTANCE_KILOMETERS = "km";
-    
+    public static final String DISTANCE_MILES = "mi";
+    public static final String DISTANCE_KILOMETERS = "km";
+
     private static final int ID_ZOOM_IN = 1;
     private static final int ID_ZOOM_OUT = 2;
 
@@ -81,18 +84,32 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferenceMapFile = prefs.getString("mapFile", null);
         File cacheDir = getExternalCacheDir();
-        File cacheFile = new File(cacheDir, mPreferenceMapFile.replace("/", "_") + ".map");
+        File mapFile = new File(cacheDir, mPreferenceMapFile.replace("/", "_") + ".map");
 
         // add map
         mMapView = new MapView(this);
-        FileOpenResult fileOpenResult = mMapView.setMapFile(cacheFile);
+        FileOpenResult fileOpenResult = mMapView.setMapFile(mapFile);
         if (!fileOpenResult.isSuccess()) {
-            Toast.makeText(this, "Failed to open map file: " + fileOpenResult.getErrorMessage(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Failed to open map file: " + fileOpenResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
         }
-        mMapView.getController().setZoom(18);
+
+        MapViewPosition position = mMapView.getMapViewPosition();
+        MapPosition newMapPosition = new MapPosition(position.getCenter(), (byte)18);
+        position.setMapPosition(newMapPosition);
+
         mMapView.setBuiltInZoomControls(true);
         mMapView.setClickable(false);
-        mMapView.setRenderTheme(InternalRenderTheme.OSMARENDER);
+
+        // set individual style
+        /*
+        File themeFile = new File(cacheDir, "rendertheme.xml");
+        try {
+            mMapView.setRenderTheme(themeFile);
+        }
+        catch (FileNotFoundException e) {
+            Toast.makeText(this, "Theme file not found, using default theme", Toast.LENGTH_SHORT).show();
+        }
+        */
 
         // rotate view
         mMapViewGroup = new RotateViewGroup(this);
@@ -113,10 +130,10 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         zoomOut.setImageResource(R.drawable.minus);
         zoomOut.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mMapView.getController().zoomOut();
+                mMapView.getMapViewPosition().zoomOut();
             }
         });
-        zoomOut.setId(ID_ZOOM_IN);
+        zoomOut.setId(ID_ZOOM_OUT);
         RelativeLayout.LayoutParams zoomOutViewLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
         zoomOutViewLayout.rightMargin = 20;
         zoomOutViewLayout.bottomMargin = 20;
@@ -128,15 +145,15 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         zoomIn.setImageResource(R.drawable.plus);
         zoomIn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                mMapView.getController().zoomIn();
+                mMapView.getMapViewPosition().zoomIn();
             }
         });
-        zoomIn.setId(ID_ZOOM_OUT);
+        zoomIn.setId(ID_ZOOM_IN);
         RelativeLayout.LayoutParams zoomInViewLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        zoomInViewLayout.rightMargin = 20;
+        zoomInViewLayout.leftMargin = 20;
         zoomInViewLayout.bottomMargin = 20;
         zoomInViewLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        zoomInViewLayout.addRule(RelativeLayout.LEFT_OF, zoomOut.getId());
+        zoomInViewLayout.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 
         // add image view to main view
         mImageViewGroup = new RelativeLayout(this);
@@ -159,7 +176,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         mPreferenceRotateMap = prefs.getBoolean("rotateMap", false);
         mPreferenceBrightness = prefs.getString("brightness", BRIGHTNESS_NOCHANGE).trim();
         mPreferenceRouteFile = prefs.getString("routeFile", null);
-        mPreferenceDistanceUnit = prefs.getString("speed", DISTANCE_MILES);
+        mPreferenceDistanceUnit = prefs.getString("distance", DISTANCE_MILES);
 
         // save user brightness
         try {
@@ -184,7 +201,10 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         handleBrightnessPreferences();
 
         // start gps thread
-        initializeLocationAndStartGpsThread();
+        this.setCurrentGpsLocation(null);
+        mThread = new Thread(new LocationThreadRunner());
+        mThread.start();
+        this.updateMyLocation();
     }
 
     /**
@@ -254,8 +274,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
 
     private void restoreBrightness() {
         if (Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL != mUserBrightnessMode && Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC != mUserBrightnessMode) {
-            Toast toast = Toast.makeText(this, "Failed to restore brightness settings", Toast.LENGTH_LONG);
-            toast.show();
+            Toast.makeText(this, "Failed to restore brightness settings", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -268,17 +287,6 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     }
 
     /**
-     * set location to last known position and start
-     * thread to handle position changes
-     */
-    private void initializeLocationAndStartGpsThread() {
-        this.setCurrentGpsLocation(null);
-        mThread = new Thread(new LocationThreadRunner());
-        mThread.start();
-        this.updateMyLocation();
-    }
-
-    /**
      * send a message to the update handler with either the current location
      * or the last known location.
      * 
@@ -287,7 +295,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     private void setCurrentGpsLocation(Location location) {
         if (location == null) {
             mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 500, 0, this);
+            mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
             setTitle("Waiting for GPS signal...");
@@ -319,7 +327,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
                     speed = speed / 1.609344f;
                 }
 
-                String speedText = new DecimalFormat("###.##").format(speed);
+                String speedText = new DecimalFormat("###").format(speed);
                 if (mPreferenceDistanceUnit.equals(DISTANCE_MILES)) {
                     speedText = speedText + " mph";
                 }
@@ -373,10 +381,10 @@ public class MapMapsForge extends MapActivity implements LocationListener {
      * move map to my current location
      */
     private void updateMyLocation() {
-        GeoPoint point = new GeoPoint((int) (mLatitude * 1E6), (int) (mLongitude * 1E6));
-
-        MapController mapController = mMapView.getController();
-        mapController.setCenter(point);
+        GeoPoint point = new GeoPoint(mLatitude, mLongitude);
+        MapViewPosition position = mMapView.getMapViewPosition();
+        MapPosition newMapPosition = new MapPosition(point, position.getZoomLevel());
+        position.setMapPosition(newMapPosition);
     }
 
     /**
@@ -430,36 +438,29 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         GPXParser parser = new GPXParser(routeFile);
         List<List<Location>> tracks = parser.getTracks();
 
-        ArrayWayOverlay wayOverlay = new ArrayWayOverlay(wayPaint, wayPaint);
+        ListOverlay listOverlay = new ListOverlay();
+        List<OverlayItem> overlayItems = listOverlay.getOverlayItems();
 
         Iterator<List<Location>> trackIterator = tracks.iterator();
         while (trackIterator.hasNext()) {
             List<Location> waypoints = trackIterator.next();
-            GeoPoint[][] geoPoints = new GeoPoint[waypoints.size() - 1][];
+            List<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
 
             Iterator<Location> waypointIterator = waypoints.iterator();
-            Location lastWaypoint = null;
 
-            int i = 0;
             while (waypointIterator.hasNext()) {
                 Location waypoint = waypointIterator.next();
 
-                if (null != lastWaypoint) {
-                    geoPoints[i] = new GeoPoint[] {
-                        new GeoPoint((int) (lastWaypoint.getLatitude() * 1E6), (int) (lastWaypoint.getLongitude() * 1E6)),
-                        new GeoPoint((int) (waypoint.getLatitude() * 1E6), (int) (waypoint.getLongitude() * 1E6))
-                    };
-                    i++;
-                }
-
-                lastWaypoint = waypoint;
+                GeoPoint geoPoint = new GeoPoint(waypoint.getLatitude(), waypoint.getLongitude());
+                geoPoints.add(geoPoint);
             }
 
-            OverlayWay way = new OverlayWay(geoPoints);
-            wayOverlay.addWay(way);
+            PolygonalChain way = new PolygonalChain(geoPoints);
+            Polyline polyline = new Polyline(way, wayPaint);
+            overlayItems.add(polyline);
         }
 
-        mMapView.getOverlays().add(wayOverlay);
+        overlays.add(listOverlay);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -477,6 +478,9 @@ public class MapMapsForge extends MapActivity implements LocationListener {
                 return true;
             case R.id.menu_loadfromsd:
                 startActivity(new Intent(getBaseContext(), LoadRouteFromSD.class));
+                return true;
+            case R.id.menu_loadfromtoursprung:
+                startActivity(new Intent(getBaseContext(), LoadRouteFromToursprung.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

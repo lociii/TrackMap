@@ -14,16 +14,23 @@
         <item>medium</item>
         <item>low</item>
     </string-array>
-    <string-array name="speedLabels">
+    <string-array name="distanceLabels">
         <item>Kilometers</item>
         <item>Miles</item>
     </string-array>
-    <string-array name="speedValues">
+    <string-array name="distanceValues">
         <item>km</item>
         <item>mi</item>
     </string-array>
     <string-array name="mapActionLabels">
         <item>Download</item>
         <item>Remove</item>
+    </string-array>
+    <string-array name="toursprungTypeLabels">
+        <item>@string/toursprung_bikemap</item>
+        <item>@string/toursprung_inlinemap</item>
+        <item>@string/toursprung_mopedmap</item>
+        <item>@string/toursprung_runmap</item>
+        <item>@string/toursprung_wandermap</item>
     </string-array>
 </resources>

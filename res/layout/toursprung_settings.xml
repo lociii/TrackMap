@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical"
+    android:padding="8dip" >
+    <Spinner
+        android:id="@+id/type"
+        android:layout_width="fill_parent"
+        android:layout_height="48dip"
+        android:entries="@array/toursprungTypeLabels"
+        android:hint="@string/service"
+        android:prompt="@string/service" >
+    </Spinner>
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="fill_parent"
+        android:layout_height="48dip"
+        android:hint="@string/username"
+        android:inputType="textPersonName" >
+    </EditText>
+    <Button
+        android:id="@+id/save"
+        android:layout_width="fill_parent"
+        android:layout_height="48dip"
+        android:text="@string/save" >
+    </Button>
+</LinearLayout>

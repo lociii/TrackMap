@@ -13,7 +13,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String colSize = "Size";
     public static final String colUrl = "Url";
     public static final String colUpdated = "Updated";
-
+    
     public DatabaseHelper(Context context) {
         super(context, dbName, null, 1); 
     }
