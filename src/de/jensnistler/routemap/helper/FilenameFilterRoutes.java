@@ -13,6 +13,12 @@ public class FilenameFilterRoutes implements FilenameFilter {
             return false;
         }
 
+        // skip my own cache
+        CharSequence routeMap = "de.jensnistler.routemap";
+        if (path.contains(routeMap)) {
+            return false;
+        }
+
         // check for directory
         File checkForDirectory = new File(path);
         if (checkForDirectory.isDirectory() && checkForDirectory.exists()) {

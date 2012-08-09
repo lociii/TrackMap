@@ -6,6 +6,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import de.jensnistler.routemap.R;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,7 +32,7 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
     protected void onPreExecute() {
         mAdapter.setNotifyOnChange(false);
 
-        mDialog.setMessage("Downloading map...");
+        mDialog.setMessage(mContext.getResources().getString(R.string.downloading));
         mDialog.setCancelable(true);
         mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mDialog.setProgress(0);
@@ -108,7 +110,7 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
 
     protected void onProgressUpdate(Integer... progress) {
         if (0 == progress[0]) {
-            Toast.makeText(mContext, "Cannot write to cache dir", Toast.LENGTH_LONG).show();
+            Toast.makeText(mContext, R.string.cannotWriteToCache, Toast.LENGTH_LONG).show();
         }
 
         mDialog.setMax(progress[0]);

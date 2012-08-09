@@ -52,7 +52,7 @@ public class LoadRouteFromGpsies extends ListActivity {
 
         // no gpsies user set
         if (mPreferenceUser == null || mPreferenceUser.trim().length() == 0) {
-            Toast.makeText(getApplicationContext(), "Please set your gpsies.com username", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.missingGpsiesUsername, Toast.LENGTH_LONG).show();
             Intent preferencesActivity = new Intent(getBaseContext(), Preferences.class);
             startActivity(preferencesActivity);
             return;
@@ -76,7 +76,7 @@ public class LoadRouteFromGpsies extends ListActivity {
         // check if track has already been cached
         File cacheDir = getExternalCacheDir();
         if (null == cacheDir || !cacheDir.canRead()) {
-            Toast.makeText(getApplicationContext(), "Cannot read from cache directory", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), R.string.cannotReadFromCache, Toast.LENGTH_LONG).show();
             return;
         }
 

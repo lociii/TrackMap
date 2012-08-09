@@ -61,12 +61,12 @@ public class TrackAdapter extends ArrayAdapter<TrackModel> {
             TextView bt = (TextView) v.findViewById(R.id.bottomtext);
             if (bt != null) {
                 Float length = track.getLength() / 1000f;
-                String unit = "km";
+                String unit = mContext.getResources().getString(R.string.km);
 
                 // convert to miles
                 if (mPreferenceDistanceUnit.equals(MapMapsForge.DISTANCE_MILES)) {
                     length = length / 1.609344f;
-                    unit = "mi";
+                    unit = mContext.getResources().getString(R.string.mi);
                 }
 
                 bt.setText(Math.round(length) + " " + unit);

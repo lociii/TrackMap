@@ -3,30 +3,30 @@
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="standby"
-        android:summary="Deactivate standby while RouteMap is active"
-        android:title="Deactivate standby" />
+        android:summary="@string/settingStandbyLong"
+        android:title="@string/settingStandby" />
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="rotateMap"
-        android:summary="Rotate map according to direction of travel"
-        android:title="Rotate map" />
+        android:summary="@string/settingRotateLong"
+        android:title="@string/settingRotate" />
     <ListPreference
         android:defaultValue="nochange"
         android:entries="@array/brightnessLabels"
         android:entryValues="@array/brightnessValues"
         android:key="brightness"
-        android:summary="Screen brightness while the map is visible"
-        android:title="Brightness" />
+        android:summary="@string/settingBrightnessLong"
+        android:title="@string/settingBrightness" />
     <ListPreference
         android:defaultValue="mi"
         android:entries="@array/distanceLabels"
         android:entryValues="@array/distanceValues"
         android:key="distance"
-        android:summary="The unit type to calculate distances in"
-        android:title="Distance unit" />
+        android:summary="@string/settingDistanceLong"
+        android:title="@string/settingDistance" />
     <EditTextPreference
         android:defaultValue=""
         android:key="gpsiesUsername"
-        android:summary="Your username on gpsies.com"
-        android:title="Gpsies Username" />
+        android:summary="@string/settingGpsiesLong"
+        android:title="@string/settingGpsies" />
 </PreferenceScreen>

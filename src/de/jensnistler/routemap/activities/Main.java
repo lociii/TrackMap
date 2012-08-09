@@ -39,21 +39,21 @@ public class Main extends PreferenceActivity {
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             String preferenceMapFile = prefs.getString("mapFile", null);
             if (null == preferenceMapFile) {
-                Toast.makeText(this, "Please load a map file", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.loadMapFile, Toast.LENGTH_LONG).show();
                 redirectToLoadMap();
                 return;
             }
 
             File cacheDir = getExternalCacheDir();
             if (null == cacheDir || !cacheDir.canRead()) {
-                Toast.makeText(this, "Cannot read from cache directory", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.cannotReadFromCache, Toast.LENGTH_LONG).show();
                 redirectToLoadMap();
                 return;
             }
 
             File cacheFile = new File(cacheDir, preferenceMapFile.replace("/", "_") + ".map");
             if (!cacheFile.exists() || !cacheFile.canRead()) {
-                Toast.makeText(this, "Selected map does not exist", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.selecteMapNotExists, Toast.LENGTH_LONG).show();
                 redirectToLoadMap();
                 return;
             }
@@ -67,15 +67,15 @@ public class Main extends PreferenceActivity {
 
     private void createGpsDisabledAlert(){
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("GPS required, please enable.");
+        builder.setMessage(R.string.gpsRequired);
         builder.setCancelable(false);
-        builder.setPositiveButton("Enable GPS", new DialogInterface.OnClickListener() {
+        builder.setPositiveButton(R.string.enableGps, new DialogInterface.OnClickListener() {
               public void onClick(DialogInterface dialog, int id) {
                   Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);  
                   startActivity(gpsOptionsIntent);
               }
          });
-         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
               public void onClick(DialogInterface dialog, int id) {
                    dialog.cancel();
                    Main.this.finish();

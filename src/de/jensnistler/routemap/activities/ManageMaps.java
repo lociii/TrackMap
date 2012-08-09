@@ -24,10 +24,10 @@ import de.jensnistler.routemap.helper.MapListUpdater;
 import de.jensnistler.routemap.helper.MapModel;
 
 public class ManageMaps extends ListActivity {
+    private static String URL_MAP_LIST = "http://static.jensnistler.de/maps.json";
+
     private MapDataSource mDataSource;
     private MapAdapter mAdapter;
-
-
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +47,7 @@ public class ManageMaps extends ListActivity {
         listView.setAdapter(mAdapter);
 
         if (values.isEmpty()) {
-            new MapListUpdater(this, mAdapter, mDataSource).execute("http://static.jensnistler.de/maps.json");
+            new MapListUpdater(this, mAdapter, mDataSource).execute(URL_MAP_LIST);
         }
 
         registerForContextMenu(listView);
@@ -58,7 +58,7 @@ public class ManageMaps extends ListActivity {
 
         MapModel selection = (MapModel) l.getItemAtPosition(position);
         if (selection.getUpdated() != 0) {
-            Toast.makeText(this, "Loading: " + selection.getDescription(), Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getResources().getString(R.string.loadingX) + " " + selection.getDescription(), Toast.LENGTH_LONG).show();
 
             SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
             SharedPreferences.Editor editor = settings.edit();
@@ -83,12 +83,12 @@ public class ManageMaps extends ListActivity {
         menu.setHeaderTitle(contextSelection.getDescription());
         if (contextSelection.getUpdated() != 0) {
             if (contextSelection.getDate() < contextSelection.getUpdated()) {
-                menu.add(Menu.NONE, 1, 1, "Update");
+                menu.add(Menu.NONE, 1, 1, R.string.update);
             }
-            menu.add(Menu.NONE, 2, 2, "Remove");
+            menu.add(Menu.NONE, 2, 2, R.string.remove);
         }
         else {
-            menu.add(Menu.NONE, 3, 3, "Download");
+            menu.add(Menu.NONE, 3, 3, R.string.download);
         }
     }
 
@@ -98,7 +98,7 @@ public class ManageMaps extends ListActivity {
             case 2:
                 File cacheDir = getExternalCacheDir();
                 if (null == cacheDir || !cacheDir.canWrite()) {
-                    Toast.makeText(this, "Cache is not writable", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, R.string.cannotWriteToCache, Toast.LENGTH_LONG).show();
                     return true;
                 }
                 File cacheFile = new File(cacheDir, contextSelection.getKey().replace("/", "_") + ".map");
@@ -130,7 +130,7 @@ public class ManageMaps extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_updatemaps:
-                new MapListUpdater(this, mAdapter, mDataSource).execute("http://static.jensnistler.de/maps.json");
+                new MapListUpdater(this, mAdapter, mDataSource).execute(URL_MAP_LIST);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

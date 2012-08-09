@@ -11,6 +11,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import de.jensnistler.routemap.R;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
@@ -33,7 +35,7 @@ public class MapListUpdater extends AsyncTask<String, Integer, Integer> {
         mAdapter.clear();
 
         mDialog.setCancelable(false);
-        mDialog.setMessage("Loading map list...");
+        mDialog.setMessage(mContext.getResources().getString(R.string.loading));
         mDialog.show();
     }
 

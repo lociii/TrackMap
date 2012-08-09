@@ -165,7 +165,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         // add map
         FileOpenResult fileOpenResult = view.setMapFile(mapFile);
         if (!fileOpenResult.isSuccess()) {
-            Toast.makeText(this, "Failed to open map file: " + fileOpenResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.failedToOpenMap + " " + fileOpenResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -237,7 +237,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         if (null != mPreferenceRouteFile) {
             File routeFile = new File(mPreferenceRouteFile.trim());
             if (!routeFile.exists()) {
-                Toast.makeText(this, "Failed to load route file: " + mPreferenceRouteFile, Toast.LENGTH_LONG).show();
+                Toast.makeText(this, R.string.failedToOpenTrack + " " + mPreferenceRouteFile, Toast.LENGTH_LONG).show();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("routeFile", null);
@@ -280,7 +280,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
 
     private void restoreBrightness() {
         if (Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL != mUserBrightnessMode && Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC != mUserBrightnessMode) {
-            Toast.makeText(this, "Failed to restore brightness settings", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, R.string.failedToRestoreBrightness, Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -304,7 +304,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-            setTitle("Waiting for GPS signal...");
+            setTitle(R.string.waitingForGps);
         }
 
         try {
@@ -335,10 +335,10 @@ public class MapMapsForge extends MapActivity implements LocationListener {
 
                 String speedText = new DecimalFormat("###").format(speed);
                 if (mPreferenceDistanceUnit.equals(DISTANCE_MILES)) {
-                    speedText = speedText + " mph";
+                    speedText = speedText + " " + getResources().getString(R.string.mph);
                 }
                 else if (mPreferenceDistanceUnit.equals(DISTANCE_KILOMETERS)) {
-                    speedText = speedText + " km/h";
+                    speedText = speedText + " " + getResources().getString(R.string.kmh);
                 }
 
                 setTitle(speedText);
@@ -476,7 +476,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mapmapsforge, menu);
+        getMenuInflater().inflate(R.menu.mainmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 

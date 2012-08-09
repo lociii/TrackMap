@@ -13,6 +13,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import de.jensnistler.routemap.R;
+
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -37,7 +39,7 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
         mAdapter.clear();
 
         mDialog.setCancelable(false);
-        mDialog.setMessage("Loading track list...");
+        mDialog.setMessage(mContext.getResources().getString(R.string.loading));
         mDialog.show();
     }
 

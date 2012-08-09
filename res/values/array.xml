@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string-array name="brightnessLabels">
-        <item>Don\'t change</item>
-        <item>Automatic</item>
-        <item>Maximum</item>
-        <item>Medium</item>
-        <item>Low</item>
+        <item>@string/brightnessSystem</item>
+        <item>@string/brightnessAutomatic</item>
+        <item>@string/brightnessMaximum</item>
+        <item>@string/brightnessMedium</item>
+        <item>@string/brightnessMinimum</item>
     </string-array>
     <string-array name="brightnessValues">
         <item>nochange</item>
@@ -15,22 +15,15 @@
         <item>low</item>
     </string-array>
     <string-array name="distanceLabels">
-        <item>Kilometers</item>
-        <item>Miles</item>
+        <item>@string/kilometers</item>
+        <item>@string/miles</item>
     </string-array>
     <string-array name="distanceValues">
         <item>km</item>
         <item>mi</item>
     </string-array>
     <string-array name="mapActionLabels">
-        <item>Download</item>
-        <item>Remove</item>
-    </string-array>
-    <string-array name="toursprungTypeLabels">
-        <item>@string/toursprung_bikemap</item>
-        <item>@string/toursprung_inlinemap</item>
-        <item>@string/toursprung_mopedmap</item>
-        <item>@string/toursprung_runmap</item>
-        <item>@string/toursprung_wandermap</item>
+        <item>@string/download</item>
+        <item>@string/remove</item>
     </string-array>
 </resources>

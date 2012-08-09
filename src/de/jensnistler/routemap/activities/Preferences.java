@@ -9,7 +9,6 @@ import android.preference.PreferenceActivity;
 import de.jensnistler.routemap.R;
 
 public class Preferences extends PreferenceActivity {
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
@@ -44,28 +43,28 @@ public class Preferences extends PreferenceActivity {
 
     private void setBrightnessSummary(ListPreference preference, String value) {
         if (value.equals(MapMapsForge.BRIGHTNESS_NOCHANGE)) {
-            preference.setSummary("Use system setting");
+            preference.setSummary(R.string.brightnessSystem);
         }
         else if (value.equals(MapMapsForge.BRIGHTNESS_AUTOMATIC)) {
-            preference.setSummary("Automatic");
+            preference.setSummary(R.string.brightnessAutomatic);
         }
         else if (value.equals(MapMapsForge.BRIGHTNESS_MAXIMUM)) {
-            preference.setSummary("Maximum");
+            preference.setSummary(R.string.brightnessMaximum);
         }
         else if (value.equals(MapMapsForge.BRIGHTNESS_MEDIUM)) {
-            preference.setSummary("Medium");
+            preference.setSummary(R.string.brightnessMedium);
         }
         else if (value.equals(MapMapsForge.BRIGHTNESS_LOW)) {
-            preference.setSummary("Low");
+            preference.setSummary(R.string.brightnessMinimum);
         }
     }
 
     private void setDistanceSummary(ListPreference preference, String value) {
         if (value.equals(MapMapsForge.DISTANCE_MILES)) {
-            preference.setSummary("Miles");
+            preference.setSummary(R.string.miles);
         }
         else if (value.equals(MapMapsForge.DISTANCE_KILOMETERS)) {
-            preference.setSummary("Kilometers");
+            preference.setSummary(R.string.kilometers);
         }
     }
 
@@ -74,7 +73,7 @@ public class Preferences extends PreferenceActivity {
             preference.setSummary(value);
         }
         else {
-            preference.setSummary("Your username on gpsies.com");
+            preference.setSummary(R.string.settingGpsiesLong);
         }
     }
 }

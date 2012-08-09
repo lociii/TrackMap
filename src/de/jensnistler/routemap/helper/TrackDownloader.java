@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import de.jensnistler.routemap.R;
 import de.jensnistler.routemap.activities.Main;
 
 public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
@@ -29,7 +30,7 @@ public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
     }
 
     protected void onPreExecute() {
-        mDialog.setMessage("Downloading track...");
+        mDialog.setMessage(mContext.getResources().getString(R.string.downloading));
         mDialog.setCancelable(true);
         mDialog.setOnCancelListener(new OnCancelListener() {
             public void onCancel(DialogInterface dialog) {
