@@ -1,6 +1,7 @@
 package de.jensnistler.routemap.activities;
 
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -30,6 +31,15 @@ public class Preferences extends PreferenceActivity {
                 return true;
             }
         });
+
+        EditTextPreference gpsiesUsername = (EditTextPreference) findPreference("gpsiesUsername");
+        setGpsiesUsernameSummary(gpsiesUsername, gpsiesUsername.getText());
+        gpsiesUsername.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                setGpsiesUsernameSummary((EditTextPreference) preference, (String) newValue);
+                return true;
+            }
+        });
     }
 
     private void setBrightnessSummary(ListPreference preference, String value) {
@@ -56,6 +66,15 @@ public class Preferences extends PreferenceActivity {
         }
         else if (value.equals(MapMapsForge.DISTANCE_KILOMETERS)) {
             preference.setSummary("Kilometers");
+        }
+    }
+
+    private void setGpsiesUsernameSummary(EditTextPreference preference, String value) {
+        if (value.trim().length() > 0) {
+            preference.setSummary(value);
+        }
+        else {
+            preference.setSummary("Your username on gpsies.com");
         }
     }
 }

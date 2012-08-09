@@ -70,7 +70,7 @@
             android:label="Load route from SD-Card" >
         </activity>
         <activity
-            android:name=".activities.LoadRouteFromToursprung"
+            android:name=".activities.LoadRouteFromGpsies"
             android:label="Load track from Toursrpung" >
         </activity>
     </application>

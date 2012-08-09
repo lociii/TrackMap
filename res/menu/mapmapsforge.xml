@@ -34,14 +34,14 @@
         android:visible="true">
     </item>
     <item
-        android:id="@+id/menu_loadfromtoursprung"
-        android:alphabeticShortcut="T"
+        android:id="@+id/menu_loadfromgpsies"
+        android:alphabeticShortcut="G"
         android:checkable="false"
         android:checked="false"
         android:enabled="true"
         android:numericShortcut="4"
-        android:title="Load route from Toursprung"
-        android:titleCondensed="Load from Toursprung"
+        android:title="Load route from gpsies.com"
+        android:titleCondensed="Load from gpsies"
         android:visible="true">
     </item>
 </menu>

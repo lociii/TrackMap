@@ -24,4 +24,9 @@
         android:key="distance"
         android:summary="The unit type to calculate distances in"
         android:title="Distance unit" />
+    <EditTextPreference
+        android:defaultValue=""
+        android:key="gpsiesUsername"
+        android:summary="Your username on gpsies.com"
+        android:title="Gpsies Username" />
 </PreferenceScreen>

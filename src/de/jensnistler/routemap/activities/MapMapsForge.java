@@ -31,6 +31,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -64,7 +65,6 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     private boolean mPreferenceRotateMap;
     private String mPreferenceBrightness;
     private String mPreferenceRouteFile;
-    private String mPreferenceMapFile;
     private String mPreferenceDistanceUnit;
     private int mUserBrightnessMode;
 
@@ -81,17 +81,8 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        mPreferenceMapFile = prefs.getString("mapFile", null);
-        File cacheDir = getExternalCacheDir();
-        File mapFile = new File(cacheDir, mPreferenceMapFile.replace("/", "_") + ".map");
-
         // add map
         mMapView = new MapView(this);
-        FileOpenResult fileOpenResult = mMapView.setMapFile(mapFile);
-        if (!fileOpenResult.isSuccess()) {
-            Toast.makeText(this, "Failed to open map file: " + fileOpenResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
-        }
 
         MapViewPosition position = mMapView.getMapViewPosition();
         MapPosition newMapPosition = new MapPosition(position.getCenter(), (byte)18);
@@ -166,9 +157,26 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         setContentView(mViewGroup);
     }
 
+    private void loadMapFile(MapView view) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        String mapFilePath = prefs.getString("mapFile", null);
+        File cacheDir = getExternalCacheDir();
+        File mapFile = new File(cacheDir, mapFilePath.replace("/", "_") + ".map");
+
+        // add map
+        FileOpenResult fileOpenResult = view.setMapFile(mapFile);
+        if (!fileOpenResult.isSuccess()) {
+            Toast.makeText(this, "Failed to open map file: " + fileOpenResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
+
+        // load map file
+        loadMapFile(mMapView);
+        loadRouteFile();
 
         // load preference data
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -197,7 +205,6 @@ public class MapMapsForge extends MapActivity implements LocationListener {
             mMapViewGroup.setHeading(0.0f);
         }
 
-        loadRouteFile();
         handleBrightnessPreferences();
 
         // start gps thread
@@ -479,8 +486,8 @@ public class MapMapsForge extends MapActivity implements LocationListener {
             case R.id.menu_loadfromsd:
                 startActivity(new Intent(getBaseContext(), LoadRouteFromSD.class));
                 return true;
-            case R.id.menu_loadfromtoursprung:
-                startActivity(new Intent(getBaseContext(), LoadRouteFromToursprung.class));
+            case R.id.menu_loadfromgpsies:
+                startActivity(new Intent(getBaseContext(), LoadRouteFromGpsies.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

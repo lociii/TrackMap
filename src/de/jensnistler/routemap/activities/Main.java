@@ -58,7 +58,9 @@ public class Main extends PreferenceActivity {
                 return;
             }
 
+            // show map
             Intent mapActivity = new Intent(getBaseContext(), MapMapsForge.class);
+            mapActivity.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(mapActivity);
         }
     }

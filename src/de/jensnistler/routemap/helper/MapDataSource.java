@@ -8,7 +8,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
-public class DataSourceMap {
+public class MapDataSource {
     // database fields
     private SQLiteDatabase mDatabase;
     private DatabaseHelper mDbHelper;
@@ -21,7 +21,7 @@ public class DataSourceMap {
         DatabaseHelper.colUpdated
     };
 
-    public DataSourceMap(Context context) {
+    public MapDataSource(Context context) {
         mDbHelper = new DatabaseHelper(context);
     }
 
