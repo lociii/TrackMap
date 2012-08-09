@@ -6,12 +6,12 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class RotateViewGroup extends ViewGroup {
+public class ViewGroupRotate extends ViewGroup {
     private static final float SQ2 = 1.414213562373095f;
     private final SmoothCanvas mCanvas = new SmoothCanvas();
     private float mHeading = 0;
 
-    public RotateViewGroup(Context context) {
+    public ViewGroupRotate(Context context) {
         super(context);
     }
 

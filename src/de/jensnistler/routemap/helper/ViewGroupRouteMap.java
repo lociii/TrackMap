@@ -4,8 +4,8 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class RouteMapViewGroup extends ViewGroup {
-    public RouteMapViewGroup(Context context) {
+public class ViewGroupRouteMap extends ViewGroup {
+    public ViewGroupRouteMap(Context context) {
         super(context);
     }
 

@@ -31,7 +31,6 @@ import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,8 +42,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import de.jensnistler.routemap.R;
 import de.jensnistler.routemap.helper.GPXParser;
-import de.jensnistler.routemap.helper.RotateViewGroup;
-import de.jensnistler.routemap.helper.RouteMapViewGroup;
+import de.jensnistler.routemap.helper.ViewGroupRotate;
+import de.jensnistler.routemap.helper.ViewGroupRouteMap;
 
 public class MapMapsForge extends MapActivity implements LocationListener {
     private static final int UPDATE_LOCATION = 1;
@@ -69,8 +68,8 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     private int mUserBrightnessMode;
 
     private MapView mMapView;
-    private RotateViewGroup mMapViewGroup; 
-    private RouteMapViewGroup mViewGroup;
+    private ViewGroupRotate mMapViewGroup; 
+    private ViewGroupRouteMap mViewGroup;
     private RelativeLayout mImageViewGroup;
     private LocationManager mLocationManager;
     private double mLatitude;
@@ -103,10 +102,10 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         */
 
         // rotate view
-        mMapViewGroup = new RotateViewGroup(this);
+        mMapViewGroup = new ViewGroupRotate(this);
         mMapViewGroup.addView(mMapView);
 
-        mViewGroup = new RouteMapViewGroup(this);
+        mViewGroup = new ViewGroupRouteMap(this);
         mViewGroup.addView(mMapViewGroup);
 
         // position marker
@@ -209,7 +208,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
 
         // start gps thread
         this.setCurrentGpsLocation(null);
-        mThread = new Thread(new LocationThreadRunner());
+        mThread = new Thread(new LocationThreadRunner(updateHandler));
         mThread.start();
         this.updateMyLocation();
     }
@@ -313,7 +312,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
             mLatitude = location.getLatitude();
             Message msg = Message.obtain();
             msg.what = UPDATE_LOCATION;
-            de.jensnistler.routemap.activities.MapMapsForge.this.updateHandler.sendMessage(msg);
+            updateHandler.sendMessage(msg);
 
             // rotate map
             if (true == mPreferenceRotateMap && location.hasBearing()) {
@@ -352,13 +351,13 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     /**
      * handles gps updates
      */
-    Handler updateHandler = new Handler() {
+    private Handler updateHandler = new Handler() {
         /** Gets called on every message that is received */
         // @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UPDATE_LOCATION:
-                    de.jensnistler.routemap.activities.MapMapsForge.this.updateMyLocation();
+                    MapMapsForge.this.updateMyLocation();
                     break;
             }
             super.handleMessage(msg);
@@ -368,13 +367,19 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     /**
      * handles location updates in the background.
      */
-    class LocationThreadRunner implements Runnable {
+    private class LocationThreadRunner implements Runnable {
+        Handler mHandler;
+
+        public LocationThreadRunner(Handler handler) {
+            mHandler = handler;
+        }
+
         // @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()) {
                 Message m = Message.obtain();
                 m.what = 0;
-                de.jensnistler.routemap.activities.MapMapsForge.this.updateHandler.sendMessage(m);
+                mHandler.sendMessage(m);
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
