@@ -42,6 +42,7 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import de.jensnistler.routemap.R;
 import de.jensnistler.routemap.helper.GPXParser;
+import de.jensnistler.routemap.helper.LocationThreadRunner;
 import de.jensnistler.routemap.helper.ViewGroupRotate;
 import de.jensnistler.routemap.helper.ViewGroupRouteMap;
 
@@ -363,31 +364,6 @@ public class MapMapsForge extends MapActivity implements LocationListener {
             super.handleMessage(msg);
         }
     };
-
-    /**
-     * handles location updates in the background.
-     */
-    private class LocationThreadRunner implements Runnable {
-        Handler mHandler;
-
-        public LocationThreadRunner(Handler handler) {
-            mHandler = handler;
-        }
-
-        // @Override
-        public void run() {
-            while (!Thread.currentThread().isInterrupted()) {
-                Message m = Message.obtain();
-                m.what = 0;
-                mHandler.sendMessage(m);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        }
-    }
 
     /**
      * move map to my current location
