@@ -125,10 +125,10 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         });
         zoomOut.setId(ID_ZOOM_OUT);
         RelativeLayout.LayoutParams zoomOutViewLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        zoomOutViewLayout.rightMargin = 20;
+        zoomOutViewLayout.leftMargin = 20;
         zoomOutViewLayout.bottomMargin = 20;
         zoomOutViewLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        zoomOutViewLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        zoomOutViewLayout.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 
         // zoom in
         ImageButton zoomIn = new ImageButton(this);
@@ -140,10 +140,10 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         });
         zoomIn.setId(ID_ZOOM_IN);
         RelativeLayout.LayoutParams zoomInViewLayout = new RelativeLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        zoomInViewLayout.leftMargin = 20;
+        zoomInViewLayout.rightMargin = 20;
         zoomInViewLayout.bottomMargin = 20;
         zoomInViewLayout.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        zoomInViewLayout.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        zoomInViewLayout.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 
         // add image view to main view
         mImageViewGroup = new RelativeLayout(this);
