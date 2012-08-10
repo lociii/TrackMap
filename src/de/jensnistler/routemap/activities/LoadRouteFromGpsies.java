@@ -21,9 +21,6 @@ import de.jensnistler.routemap.helper.TrackModel;
 import de.jensnistler.routemap.helper.TrackAdapter;
 
 public class LoadRouteFromGpsies extends ListActivity {
-    private static final String URL = "http://www.gpsies.com/api.do?key=%s&username=%s&limit=100&filetype=kml";
-    private static final String API_KEY = "cvghivivbcmwbsgs";
-
     private TrackDataSource mDataSource;
     private TrackAdapter mAdapter;
     private String mPreferenceUser;
@@ -65,8 +62,7 @@ public class LoadRouteFromGpsies extends ListActivity {
 
     private void updateTrackList() {
         mDataSource.deleteAll();
-        String url = String.format(URL, API_KEY, mPreferenceUser);
-        new TrackListUpdater(this, this.mAdapter, this.mDataSource).execute(url);
+        new TrackListUpdater(this, this.mAdapter, this.mDataSource).execute(mPreferenceUser);
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {

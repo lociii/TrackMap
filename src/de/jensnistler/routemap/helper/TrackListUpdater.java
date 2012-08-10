@@ -22,6 +22,10 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 
 public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
+    private static final String URL = "http://www.gpsies.com/api.do?key=%s&username=%s&limit=%s&filetype=gpxtrk&resultPage=%s";
+    private static final String API_KEY = "cvghivivbcmwbsgs";
+    private static final Integer LIMIT = 100;
+
     private Context mContext;
     private TrackAdapter mAdapter;
     private TrackDataSource mDataSource;
@@ -43,26 +47,35 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
         mDialog.show();
     }
 
-    protected Integer doInBackground(String... urls) {
+    protected Integer doInBackground(String... usernames) {
         int trackCount = 0;
+        XPathExpression xpathTrack;
+        XPathExpression xpathResultSize;
 
-        for (String url: urls) {
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();
+        try {
+            xpathTrack = xpath.compile("/gpsies/tracks/track");
+            xpathResultSize = xpath.compile("/gpsies/meta/resultSize");
+        }
+        catch (Exception e) {
+            return 0;
+        }
+
+        for (String username: usernames) {
             int page = 1;
 
             // loop until all tracks have been found
             while (true) {
-                String urlPage = url.replace("<page>", page + "");
+                String url = String.format(URL, API_KEY, username, LIMIT, page);
 
                 try {
                     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
                     DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-                    Document doc = docBuilder.parse(new URL(urlPage).openStream());
+                    Document doc = docBuilder.parse(new URL(url).openStream());
 
                     // get tracks
-                    XPathFactory xpathFactory = XPathFactory.newInstance();
-                    XPath xpath = xpathFactory.newXPath();
-                    XPathExpression xpathExpression = xpath.compile("/gpsies/tracks/track");
-                    NodeList tracks = (NodeList) xpathExpression.evaluate(doc, XPathConstants.NODESET);
+                    NodeList tracks = (NodeList) xpathTrack.evaluate(doc, XPathConstants.NODESET);
 
                     // loop tracks
                     for (int i = 0; i < tracks.getLength(); i++) {
@@ -85,13 +98,18 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
                         }
                         trackCount++;
                     }
+
+                    // check for last result page
+                    NodeList resultSizeNodes = (NodeList) xpathResultSize.evaluate(doc, XPathConstants.NODESET);
+                    if (Integer.parseInt(resultSizeNodes.item(0).getTextContent()) < LIMIT) {
+                        break;
+                    }
+
+                    page++;
                 }
                 catch (Exception e) {
                     e.printStackTrace();
                 }
-
-                page++;
-                break;
             }
         }
 

@@ -50,7 +50,6 @@ public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
         for (TrackModel track: tracks) {
             try {
                 String url = track.getLink();
-                url = url.replace("filetype=kml", "filetype=gpxTrk");
                 if (0 == url.length()) {
                     continue;
                 }
