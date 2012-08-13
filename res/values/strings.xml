@@ -16,7 +16,6 @@
     <string name="cannotWriteToCache">Cache is not writable</string>
     <string name="failedToOpenMap">Failed to open map file:</string>
     <string name="failedToOpenTrack">Failed to open track file:</string>
-    <string name="failedToRestoreBrightness">Failed to restore brightness settings</string>
     <string name="waitingForGps">Waiting for GPS signal&#8230;</string>
     <string name="mph">mph</string>
     <string name="kmh">km/h</string>
