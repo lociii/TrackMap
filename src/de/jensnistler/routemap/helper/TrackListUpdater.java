@@ -1,6 +1,8 @@
 package de.jensnistler.routemap.helper;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -20,6 +22,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 
 public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
     private static final String URL = "http://www.gpsies.com/api.do?key=%s&username=%s&limit=%s&filetype=gpxtrk&resultPage=%s";
@@ -39,10 +42,7 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
     }
 
     protected void onPreExecute() {
-        mAdapter.setNotifyOnChange(false);
-        mAdapter.clear();
-
-        mDialog.setCancelable(false);
+        mDialog.setCancelable(true);
         mDialog.setMessage(mContext.getResources().getString(R.string.loading));
         mDialog.show();
     }
@@ -66,10 +66,10 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
             int page = 1;
 
             // loop until all tracks have been found
-            while (true) {
-                String url = String.format(URL, API_KEY, username, LIMIT, page);
+            try {
+                while (true) {
+                    String url = String.format(URL, API_KEY, username, LIMIT, page);
 
-                try {
                     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
                     DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
                     Document doc = docBuilder.parse(new URL(url).openStream());
@@ -93,9 +93,8 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
                         model.setDescription(description);
                         model.setLength(length);
                         model.setLink(link);
-                        if (true == mDataSource.saveTrack(model)) {
-                            mAdapter.add(model);
-                        }
+                        mDataSource.saveTrack(model);
+
                         trackCount++;
                     }
 
@@ -107,27 +106,36 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
 
                     page++;
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
+
+                long epoch = System.currentTimeMillis() / 1000;
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.mContext);
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.putLong("gpsiesLastUpdate", epoch);
+                editor.commit();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
             }
         }
-
-        long epoch = System.currentTimeMillis() / 1000;
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this.mContext);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("gpsiesLastUpdate", epoch);
-        editor.commit();
 
         return trackCount;
     }
 
     protected void onPostExecute(Integer count) {
         mDialog.dismiss();
-        mAdapter.setNotifyOnChange(true);
 
         if (count > 0) {
+            mAdapter.clear();
+            ArrayList<TrackModel> tracks = mDataSource.getAllTracks();
+            Iterator<TrackModel> iterator = tracks.iterator();
+            while (iterator.hasNext()) {
+                TrackModel track = iterator.next();
+                mAdapter.add(track);
+            }
             mAdapter.notifyDataSetChanged();
+        }
+        else {
+            Toast.makeText(mContext, R.string.updateFailed, Toast.LENGTH_LONG).show();
         }
     }
 }

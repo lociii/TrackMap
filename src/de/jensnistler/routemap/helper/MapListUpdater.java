@@ -1,6 +1,7 @@
 package de.jensnistler.routemap.helper;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.apache.http.client.HttpClient;
@@ -16,6 +17,7 @@ import de.jensnistler.routemap.R;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 public class MapListUpdater extends AsyncTask<String, Integer, Integer> {
     private Context mContext;
@@ -31,10 +33,7 @@ public class MapListUpdater extends AsyncTask<String, Integer, Integer> {
     }
 
     protected void onPreExecute() {
-        mAdapter.setNotifyOnChange(false);
-        mAdapter.clear();
-
-        mDialog.setCancelable(false);
+        mDialog.setCancelable(true);
         mDialog.setMessage(mContext.getResources().getString(R.string.loading));
         mDialog.show();
     }
@@ -81,10 +80,7 @@ public class MapListUpdater extends AsyncTask<String, Integer, Integer> {
                         map.setDate(entry.getInt("date"));
                         map.setSize(entry.getLong("size"));
                         map.setUrl(entry.getString("url"));
-
-                        if (true == mDataSource.saveMap(map)) {
-                            mAdapter.add(map);
-                        }
+                        mDataSource.saveMap(map);
 
                         count++;
                     }
@@ -99,10 +95,19 @@ public class MapListUpdater extends AsyncTask<String, Integer, Integer> {
 
     protected void onPostExecute(Integer count) {
         mDialog.dismiss();
-        mAdapter.setNotifyOnChange(true);
 
         if (count > 0) {
+            mAdapter.clear();
+            ArrayList<MapModel> maps = mDataSource.getAllMaps();
+            Iterator<MapModel> iterator = maps.iterator();
+            while (iterator.hasNext()) {
+                MapModel map = iterator.next();
+                mAdapter.add(map);
+            }
             mAdapter.notifyDataSetChanged();
+        }
+        else {
+            Toast.makeText(mContext, R.string.updateFailed, Toast.LENGTH_LONG).show();
         }
     }
 }

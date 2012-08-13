@@ -38,14 +38,10 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
         mDialog.setProgress(0);
         mDialog.setOnCancelListener(new OnCancelListener() {
             public void onCancel(DialogInterface dialog) {
-                onCancelled();
+                mRunning = false;
             }
         });
         mDialog.show();
-    }
-
-    protected void onCancelled() {
-        mRunning = false;
     }
 
     protected Integer doInBackground(MapModel... maps) {
@@ -123,6 +119,9 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
         mAdapter.setNotifyOnChange(true);
         if (count > 0) {
             mAdapter.notifyDataSetChanged();
+        }
+        else {
+            Toast.makeText(mContext, R.string.downloadFailed, Toast.LENGTH_LONG).show();
         }
     }
 }

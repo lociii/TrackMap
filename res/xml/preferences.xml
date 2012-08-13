@@ -18,6 +18,13 @@
         android:summary="@string/settingBrightnessLong"
         android:title="@string/settingBrightness" />
     <ListPreference
+        android:defaultValue="never"
+        android:entries="@array/dimLabels"
+        android:entryValues="@array/dimValues"
+        android:key="dim"
+        android:summary="@string/settingDimLong"
+        android:title="@string/settingDim" />
+    <ListPreference
         android:defaultValue="mi"
         android:entries="@array/distanceLabels"
         android:entryValues="@array/distanceValues"

@@ -16,6 +16,7 @@ import android.content.SharedPreferences;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
+import android.widget.Toast;
 import de.jensnistler.routemap.R;
 import de.jensnistler.routemap.activities.Main;
 
@@ -129,6 +130,9 @@ public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
         if (count > 0) {
             Intent mainActivity = new Intent(mContext, Main.class);
             mContext.startActivity(mainActivity);
+        }
+        else {
+            Toast.makeText(mContext, R.string.downloadFailed, Toast.LENGTH_LONG).show();
         }
     }
 }

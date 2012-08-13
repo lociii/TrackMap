@@ -11,5 +11,6 @@
         android:id="@android:id/empty"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:text="@string/no_maps" />
+        android:padding="8dip"
+        android:text="@string/noMaps" />
 </LinearLayout>

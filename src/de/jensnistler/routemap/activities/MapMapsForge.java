@@ -30,7 +30,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -41,19 +41,22 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 import de.jensnistler.routemap.R;
+import de.jensnistler.routemap.helper.GPSUpdateHandler;
 import de.jensnistler.routemap.helper.GPXParser;
 import de.jensnistler.routemap.helper.LocationThreadRunner;
 import de.jensnistler.routemap.helper.ViewGroupRotate;
 import de.jensnistler.routemap.helper.ViewGroupRouteMap;
 
 public class MapMapsForge extends MapActivity implements LocationListener {
-    private static final int UPDATE_LOCATION = 1;
-
     public static final String BRIGHTNESS_NOCHANGE = "nochange";
-    public static final String BRIGHTNESS_AUTOMATIC = "automatic";
     public static final String BRIGHTNESS_MAXIMUM = "maximum";
     public static final String BRIGHTNESS_MEDIUM = "medium";
     public static final String BRIGHTNESS_LOW = "low";
+
+    public static final String DIM_NEVER = "never";
+    public static final String DIM_15 = "15";
+    public static final String DIM_30 = "30";
+    public static final String DIM_60 = "60";
 
     public static final String DISTANCE_MILES = "mi";
     public static final String DISTANCE_KILOMETERS = "km";
@@ -66,7 +69,8 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     private String mPreferenceBrightness;
     private String mPreferenceRouteFile;
     private String mPreferenceDistanceUnit;
-    private int mUserBrightnessMode;
+    private String mPreferenceDim;
+    private String mPreferenceMapFile;
 
     private MapView mMapView;
     private ViewGroupRotate mMapViewGroup; 
@@ -76,6 +80,10 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     private double mLatitude;
     private double mLongitude;
     private Thread mThread;
+    private Handler mHandler = new Handler();
+    private Runnable mDimRunnable;
+    private GPSUpdateHandler mUpdateHandler;
+    private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +96,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         MapPosition newMapPosition = new MapPosition(position.getCenter(), (byte)18);
         position.setMapPosition(newMapPosition);
 
-        mMapView.setBuiltInZoomControls(true);
+        mMapView.setBuiltInZoomControls(false);
         mMapView.setClickable(false);
 
         // set individual style
@@ -155,16 +163,131 @@ public class MapMapsForge extends MapActivity implements LocationListener {
 
         // set content view
         setContentView(mViewGroup);
+
+        // set gps updatehandler
+        mUpdateHandler = new GPSUpdateHandler(this);
+
+        mDimRunnable = new Runnable() {
+            public void run() {
+                WindowManager.LayoutParams params = getWindow().getAttributes();
+                params.screenBrightness = 0.05f;
+                getWindow().setAttributes(params);
+            }
+        };
+
+        // preference handler
+        loadPreferences();
     }
 
-    private void loadMapFile(MapView view) {
+    private void loadPreferences() {
+        // load preference data
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        String mapFilePath = prefs.getString("mapFile", null);
+        mPreferenceStandby = prefs.getBoolean("standby", false);
+        mPreferenceRotateMap = prefs.getBoolean("rotateMap", false);
+        mPreferenceBrightness = prefs.getString("brightness", BRIGHTNESS_NOCHANGE).trim();
+        mPreferenceRouteFile = prefs.getString("routeFile", null);
+        mPreferenceDistanceUnit = prefs.getString("distance", DISTANCE_MILES);
+        mPreferenceDim = prefs.getString("dim", DIM_NEVER);
+        mPreferenceMapFile = prefs.getString("mapFile", null);
+
+        mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                Log.e("prefs", "changed: " + key);
+
+                if (key.equals("standby")) {
+                    mPreferenceStandby = prefs.getBoolean("standby", false);
+                    handlePreferenceStandby();
+                }
+                else if (key.equals("rotateMap")) {
+                    mPreferenceRotateMap = prefs.getBoolean("rotateMap", false);
+                    handlePreferenceRotateMap();
+                }
+                else if (key.equals("brightness")) {
+                    mPreferenceBrightness = prefs.getString("brightness", BRIGHTNESS_NOCHANGE).trim();
+                    handlePreferenceBrightness();
+                }
+                else if (key.equals("routeFile")) {
+                    mPreferenceRouteFile = prefs.getString("routeFile", null);
+                    loadRouteFile();
+                }
+                else if (key.equals("distance")) {
+                    mPreferenceDistanceUnit = prefs.getString("distance", DISTANCE_MILES);
+                }
+                else if (key.equals("dim")) {
+                    mPreferenceDim = prefs.getString("dim", DIM_NEVER);
+                    handlePreferenceDim();
+                }
+                else if (key.equals("mapFile")) {
+                    mPreferenceMapFile = prefs.getString("mapFile", null);
+                    loadMapFile();
+                }
+            }
+        };
+        prefs.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
+
+        // initially handle preferences
+        handlePreferenceStandby();
+        handlePreferenceRotateMap();
+        handlePreferenceBrightness();
+        handlePreferenceDim();
+        loadMapFile();
+        loadRouteFile();
+    }
+
+    private void handlePreferenceStandby() {
+        if (true == mPreferenceStandby) {
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+        else {
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        }
+    }
+
+    private void handlePreferenceRotateMap() {
+        if (false == mPreferenceRotateMap) {
+            mMapViewGroup.setHeading(0.0f);
+        }
+    }
+
+    private void handlePreferenceBrightness() {
+        WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
+
+        // default or automatic mode
+        if (mPreferenceBrightness.equals(BRIGHTNESS_NOCHANGE)) {
+            layoutParams.screenBrightness = -1.0f;
+        }
+        // manual mode
+        else {
+            
+            if (mPreferenceBrightness.equals(BRIGHTNESS_MAXIMUM)) {
+                layoutParams.screenBrightness = 1.0f;
+            }
+            else if (mPreferenceBrightness.equals(BRIGHTNESS_MEDIUM)) {
+                layoutParams.screenBrightness = 0.6f;
+            }
+            else if (mPreferenceBrightness.equals(BRIGHTNESS_LOW)) {
+                layoutParams.screenBrightness = 0.2f;
+            }
+        }
+
+        getWindow().setAttributes(layoutParams);
+    }
+
+    private void handlePreferenceDim() {
+        if (true == mPreferenceStandby && mPreferenceDim != DIM_NEVER) {
+            mHandler.postDelayed(mDimRunnable, Integer.parseInt(mPreferenceDim) * 1000L);
+        }
+        else {
+            mHandler.removeCallbacks(mDimRunnable);
+        }
+    }
+
+    private void loadMapFile() {
         File cacheDir = getExternalCacheDir();
-        File mapFile = new File(cacheDir, mapFilePath.replace("/", "_") + ".map");
+        File mapFile = new File(cacheDir, mPreferenceMapFile.replace("/", "_") + ".map");
 
         // add map
-        FileOpenResult fileOpenResult = view.setMapFile(mapFile);
+        FileOpenResult fileOpenResult = mMapView.setMapFile(mapFile);
         if (!fileOpenResult.isSuccess()) {
             Toast.makeText(this, R.string.failedToOpenMap + " " + fileOpenResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -174,44 +297,20 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     protected void onResume() {
         super.onResume();
 
-        // load map file
-        loadMapFile(mMapView);
-        loadRouteFile();
-
-        // load preference data
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-        mPreferenceStandby = prefs.getBoolean("standby", false);
-        mPreferenceRotateMap = prefs.getBoolean("rotateMap", false);
-        mPreferenceBrightness = prefs.getString("brightness", BRIGHTNESS_NOCHANGE).trim();
-        mPreferenceRouteFile = prefs.getString("routeFile", null);
-        mPreferenceDistanceUnit = prefs.getString("distance", DISTANCE_MILES);
-
-        // save user brightness
-        try {
-            mUserBrightnessMode = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE);
-        }
-        catch (Settings.SettingNotFoundException e) {
-            // setting not found, default can not be restored
-            mUserBrightnessMode = -1;
-        }
-
-        // disable standby
-        if (true == mPreferenceStandby) {
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-
-        // disable map rotation
-        if (false == mPreferenceRotateMap) {
-            mMapViewGroup.setHeading(0.0f);
-        }
-
-        handleBrightnessPreferences();
-
         // start gps thread
         this.setCurrentGpsLocation(null);
-        mThread = new Thread(new LocationThreadRunner(updateHandler));
+        mThread = new Thread(new LocationThreadRunner(mUpdateHandler));
         mThread.start();
         this.updateMyLocation();
+    }
+
+    @Override
+    public void onUserInteraction() {
+        handlePreferenceBrightness();
+
+        // reset dim timeout
+        mHandler.removeCallbacks(mDimRunnable);
+        handlePreferenceDim();
     }
 
     /**
@@ -219,13 +318,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
      */
     @Override
     protected void onPause() {
-        // reset standby mode
-        if (true == mPreferenceStandby) {
-            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        }
-
-        // reset brightness to user default
-        restoreBrightness();
+        mHandler.removeCallbacks(mDimRunnable);
 
         // stop gps update handler
         mThread.interrupt();
@@ -251,49 +344,6 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     }
 
     /**
-     * handle preferences and change system values
-     */
-    private void handleBrightnessPreferences() {
-        // restore user settings
-        if (mPreferenceBrightness.equals(BRIGHTNESS_NOCHANGE)) {
-            restoreBrightness();
-        }
-        // automatic mode
-        else if (mPreferenceBrightness.equals(BRIGHTNESS_AUTOMATIC)) {
-            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC);
-        }
-        // manual mode
-        else {
-            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL);
-            if (mPreferenceBrightness.equals(BRIGHTNESS_MAXIMUM)) {
-                layoutParams.screenBrightness = 1.0f;
-            }
-            else if (mPreferenceBrightness.equals(BRIGHTNESS_MEDIUM)) {
-                layoutParams.screenBrightness = 0.6f;
-            }
-            else if (mPreferenceBrightness.equals(BRIGHTNESS_LOW)) {
-                layoutParams.screenBrightness = 0.2f;
-            }
-            getWindow().setAttributes(layoutParams);
-        }
-    }
-
-    private void restoreBrightness() {
-        if (Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL != mUserBrightnessMode && Settings.System.SCREEN_BRIGHTNESS_MODE_AUTOMATIC != mUserBrightnessMode) {
-            Toast.makeText(this, R.string.failedToRestoreBrightness, Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS_MODE, mUserBrightnessMode);
-        if (mUserBrightnessMode == Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL) {
-            WindowManager.LayoutParams layoutParams = getWindow().getAttributes();
-            layoutParams.screenBrightness = -1.0f;
-            getWindow().setAttributes(layoutParams);
-        }
-    }
-
-    /**
      * send a message to the update handler with either the current location
      * or the last known location.
      * 
@@ -312,8 +362,8 @@ public class MapMapsForge extends MapActivity implements LocationListener {
             mLongitude = location.getLongitude();
             mLatitude = location.getLatitude();
             Message msg = Message.obtain();
-            msg.what = UPDATE_LOCATION;
-            updateHandler.sendMessage(msg);
+            msg.what = GPSUpdateHandler.UPDATE_LOCATION;
+            mUpdateHandler.sendMessage(msg);
 
             // rotate map
             if (true == mPreferenceRotateMap && location.hasBearing()) {
@@ -350,25 +400,9 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     }
 
     /**
-     * handles gps updates
-     */
-    private Handler updateHandler = new Handler() {
-        /** Gets called on every message that is received */
-        // @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case UPDATE_LOCATION:
-                    MapMapsForge.this.updateMyLocation();
-                    break;
-            }
-            super.handleMessage(msg);
-        }
-    };
-
-    /**
      * move map to my current location
      */
-    private void updateMyLocation() {
+    public void updateMyLocation() {
         GeoPoint point = new GeoPoint(mLatitude, mLongitude);
         MapViewPosition position = mMapView.getMapViewPosition();
         MapPosition newMapPosition = new MapPosition(point, position.getZoomLevel());
@@ -464,11 +498,8 @@ public class MapMapsForge extends MapActivity implements LocationListener {
             case R.id.menu_managemaps:
                 startActivity(new Intent(getBaseContext(), ManageMaps.class));
                 return true;
-            case R.id.menu_loadfromsd:
-                startActivity(new Intent(getBaseContext(), LoadRouteFromSD.class));
-                return true;
             case R.id.menu_loadfromgpsies:
-                startActivity(new Intent(getBaseContext(), LoadRouteFromGpsies.class));
+                startActivity(new Intent(getBaseContext(), LoadTrackFromGpsies.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

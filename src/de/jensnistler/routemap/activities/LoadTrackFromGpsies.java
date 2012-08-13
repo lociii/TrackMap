@@ -20,7 +20,7 @@ import de.jensnistler.routemap.helper.TrackListUpdater;
 import de.jensnistler.routemap.helper.TrackModel;
 import de.jensnistler.routemap.helper.TrackAdapter;
 
-public class LoadRouteFromGpsies extends ListActivity {
+public class LoadTrackFromGpsies extends ListActivity {
     private TrackDataSource mDataSource;
     private TrackAdapter mAdapter;
     private String mPreferenceUser;
@@ -28,7 +28,7 @@ public class LoadRouteFromGpsies extends ListActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.load_tracks);
+        setContentView(R.layout.load_track);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         mPreferenceUser = prefs.getString("gpsiesUsername", null);

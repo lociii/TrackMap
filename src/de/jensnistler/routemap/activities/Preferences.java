@@ -1,6 +1,7 @@
 package de.jensnistler.routemap.activities;
 
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
@@ -13,6 +14,18 @@ public class Preferences extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.preferences);
 
+        CheckBoxPreference standby = (CheckBoxPreference) findPreference("standby");
+        standby.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                ListPreference screenOff = (ListPreference) findPreference("dim");
+                screenOff.setEnabled(true);
+                if (newValue.toString().equals("false")) {
+                    screenOff.setEnabled(false);
+                }
+                return true;
+            }
+        });
+
         ListPreference brightness = (ListPreference) findPreference("brightness");
         setBrightnessSummary(brightness, brightness.getValue());
         brightness.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
@@ -21,6 +34,18 @@ public class Preferences extends PreferenceActivity {
                 return true;
             }
         });
+
+        ListPreference dim = (ListPreference) findPreference("dim");
+        setDimSummary(dim, dim.getValue());
+        dim.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                setDimSummary((ListPreference) preference, (String) newValue);
+                return true;
+            }
+        });
+        if (false == standby.isChecked()) {
+            dim.setEnabled(false);
+        }
 
         ListPreference distance = (ListPreference) findPreference("distance");
         setDistanceSummary(distance, distance.getValue());
@@ -45,9 +70,6 @@ public class Preferences extends PreferenceActivity {
         if (value.equals(MapMapsForge.BRIGHTNESS_NOCHANGE)) {
             preference.setSummary(R.string.brightnessSystem);
         }
-        else if (value.equals(MapMapsForge.BRIGHTNESS_AUTOMATIC)) {
-            preference.setSummary(R.string.brightnessAutomatic);
-        }
         else if (value.equals(MapMapsForge.BRIGHTNESS_MAXIMUM)) {
             preference.setSummary(R.string.brightnessMaximum);
         }
@@ -56,6 +78,21 @@ public class Preferences extends PreferenceActivity {
         }
         else if (value.equals(MapMapsForge.BRIGHTNESS_LOW)) {
             preference.setSummary(R.string.brightnessMinimum);
+        }
+    }
+
+    private void setDimSummary(ListPreference preference, String value) {
+        if (value.equals(MapMapsForge.DIM_NEVER)) {
+            preference.setSummary(R.string.dimNever);
+        }
+        else if (value.equals(MapMapsForge.DIM_15)) {
+            preference.setSummary(R.string.dim15);
+        }
+        else if (value.equals(MapMapsForge.DIM_30)) {
+            preference.setSummary(R.string.dim30);
+        }
+        else if (value.equals(MapMapsForge.DIM_60)) {
+            preference.setSummary(R.string.dim60);
         }
     }
 

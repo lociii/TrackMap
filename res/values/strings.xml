@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="application_name">RouteMap</string>
-    <string name="no_maps">No maps found</string>
-    <string name="no_tracks">No tracks found</string>
+    <string name="applicationName">RouteMap</string>
+    <string name="noMaps">No maps found</string>
+    <string name="noTracks">No tracks found</string>
     <string name="missingGpsiesUsername">Please set your gpsies.com username</string>
     <string name="cannotReadFromCache">Cannot read from cache directory</string>
     <string name="loadMapFile">Please load a map file</string>
@@ -39,8 +39,20 @@
     <string name="settingRotateLong">Rotate map according to direction of travel</string>
     <string name="settingBrightness">Brightness</string>
     <string name="settingBrightnessLong">Screen brightness while the map is visible</string>
+    <string name="settingDim">Dim screen</string>
+    <string name="settingDimLong">Dim screen to save power, tap again to reset brightness</string>
     <string name="settingDistance">Distance unit</string>
     <string name="settingDistanceLong">The unit type to calculate distances in</string>
     <string name="settingGpsies">Gpsies username</string>
     <string name="settingGpsiesLong">Your username on gpsies.com</string>
+    <string name="dimNever">Never</string>
+    <string name="dim15">After 15 seconds</string>
+    <string name="dim30">After 30 seconds</string>
+    <string name="dim60">After 60 seconds</string>
+    <string name="downloadFailed">Download failed, please check network settings</string>
+    <string name="updateFailed">Update failed, please check network settings</string>
+    <string name="activityManageMaps">Manage maps</string>
+    <string name="activityPreferences">Preferences</string>
+    <string name="activityLoadGpsies">Load track from gpsies.com</string>
+    <string name="mapStatus">Status</string>
 </resources>

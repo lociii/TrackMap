@@ -2,17 +2,27 @@
 <resources>
     <string-array name="brightnessLabels">
         <item>@string/brightnessSystem</item>
-        <item>@string/brightnessAutomatic</item>
         <item>@string/brightnessMaximum</item>
         <item>@string/brightnessMedium</item>
         <item>@string/brightnessMinimum</item>
     </string-array>
     <string-array name="brightnessValues">
         <item>nochange</item>
-        <item>automatic</item>
         <item>maximum</item>
         <item>medium</item>
         <item>low</item>
+    </string-array>
+    <string-array name="dimLabels">
+        <item>@string/dimNever</item>
+        <item>@string/dim15</item>
+        <item>@string/dim30</item>
+        <item>@string/dim60</item>
+    </string-array>
+    <string-array name="dimValues">
+        <item>never</item>
+        <item>15</item>
+        <item>30</item>
+        <item>60</item>
     </string-array>
     <string-array name="distanceLabels">
         <item>@string/kilometers</item>
