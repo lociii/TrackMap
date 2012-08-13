@@ -67,40 +67,40 @@ public class Preferences extends PreferenceActivity {
     }
 
     private void setBrightnessSummary(ListPreference preference, String value) {
-        if (value.equals(MapMapsForge.BRIGHTNESS_NOCHANGE)) {
+        if (value.equals(Map.BRIGHTNESS_NOCHANGE)) {
             preference.setSummary(R.string.brightnessSystem);
         }
-        else if (value.equals(MapMapsForge.BRIGHTNESS_MAXIMUM)) {
+        else if (value.equals(Map.BRIGHTNESS_MAXIMUM)) {
             preference.setSummary(R.string.brightnessMaximum);
         }
-        else if (value.equals(MapMapsForge.BRIGHTNESS_MEDIUM)) {
+        else if (value.equals(Map.BRIGHTNESS_MEDIUM)) {
             preference.setSummary(R.string.brightnessMedium);
         }
-        else if (value.equals(MapMapsForge.BRIGHTNESS_LOW)) {
+        else if (value.equals(Map.BRIGHTNESS_LOW)) {
             preference.setSummary(R.string.brightnessMinimum);
         }
     }
 
     private void setDimSummary(ListPreference preference, String value) {
-        if (value.equals(MapMapsForge.DIM_NEVER)) {
+        if (value.equals(Map.DIM_NEVER)) {
             preference.setSummary(R.string.dimNever);
         }
-        else if (value.equals(MapMapsForge.DIM_15)) {
+        else if (value.equals(Map.DIM_15)) {
             preference.setSummary(R.string.dim15);
         }
-        else if (value.equals(MapMapsForge.DIM_30)) {
+        else if (value.equals(Map.DIM_30)) {
             preference.setSummary(R.string.dim30);
         }
-        else if (value.equals(MapMapsForge.DIM_60)) {
+        else if (value.equals(Map.DIM_60)) {
             preference.setSummary(R.string.dim60);
         }
     }
 
     private void setDistanceSummary(ListPreference preference, String value) {
-        if (value.equals(MapMapsForge.DISTANCE_MILES)) {
+        if (value.equals(Map.DISTANCE_MILES)) {
             preference.setSummary(R.string.miles);
         }
-        else if (value.equals(MapMapsForge.DISTANCE_KILOMETERS)) {
+        else if (value.equals(Map.DISTANCE_KILOMETERS)) {
             preference.setSummary(R.string.kilometers);
         }
     }

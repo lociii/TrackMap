@@ -47,7 +47,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".activities.MapMapsForge"
+            android:name=".activities.Map"
             android:label="@string/applicationName"
             android:launchMode="singleTask" >
         </activity>

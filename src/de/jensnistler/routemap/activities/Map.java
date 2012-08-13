@@ -47,7 +47,7 @@ import de.jensnistler.routemap.helper.LocationThreadRunner;
 import de.jensnistler.routemap.helper.ViewGroupRotate;
 import de.jensnistler.routemap.helper.ViewGroupRouteMap;
 
-public class MapMapsForge extends MapActivity implements LocationListener {
+public class Map extends MapActivity implements LocationListener {
     public static final String BRIGHTNESS_NOCHANGE = "nochange";
     public static final String BRIGHTNESS_MAXIMUM = "maximum";
     public static final String BRIGHTNESS_MEDIUM = "medium";
@@ -73,7 +73,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     private String mPreferenceMapFile;
 
     private MapView mMapView;
-    private ViewGroupRotate mMapViewGroup; 
+    private ViewGroupRotate mMapViewGroup;
     private ViewGroupRouteMap mViewGroup;
     private RelativeLayout mImageViewGroup;
     private LocationManager mLocationManager;
@@ -286,16 +286,22 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         File cacheDir = getExternalCacheDir();
         File mapFile = new File(cacheDir, mPreferenceMapFile.replace("/", "_") + ".map");
 
-        // add map
         FileOpenResult fileOpenResult = mMapView.setMapFile(mapFile);
         if (!fileOpenResult.isSuccess()) {
             Toast.makeText(this, R.string.failedToOpenMap + " " + fileOpenResult.getErrorMessage(), Toast.LENGTH_SHORT).show();
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("mapFile", null);
+            editor.commit();
         }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        handlePreferenceBrightness();
+        handlePreferenceDim();
 
         // start gps thread
         this.setCurrentGpsLocation(null);
@@ -306,6 +312,8 @@ public class MapMapsForge extends MapActivity implements LocationListener {
 
     @Override
     public void onUserInteraction() {
+        super.onUserInteraction();
+
         handlePreferenceBrightness();
 
         // reset dim timeout
@@ -313,11 +321,9 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         handlePreferenceDim();
     }
 
-    /**
-     * restore settings on pause
-     */
     @Override
     protected void onPause() {
+        // remove dim timeout
         mHandler.removeCallbacks(mDimRunnable);
 
         // stop gps update handler
@@ -327,7 +333,6 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     }
 
     private void loadRouteFile() {
-        // load route file
         if (null != mPreferenceRouteFile) {
             File routeFile = new File(mPreferenceRouteFile.trim());
             if (!routeFile.exists()) {
@@ -343,14 +348,11 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         }
     }
 
-    /**
-     * send a message to the update handler with either the current location
-     * or the last known location.
-     * 
-     * @param location either null or the current location
-     */
     private void setCurrentGpsLocation(Location location) {
+        Boolean isLastLocation = false;
         if (location == null) {
+            isLastLocation = true;
+
             mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
             mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
             location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -371,7 +373,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
             }
 
             // show speed in activity title
-            if (true == location.hasSpeed()) {
+            if (false == isLastLocation && true == location.hasSpeed()) {
                 // meters per second
                 float speed = location.getSpeed();
                 // meters per hour
@@ -399,9 +401,6 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         }
     }
 
-    /**
-     * move map to my current location
-     */
     public void updateMyLocation() {
         GeoPoint point = new GeoPoint(mLatitude, mLongitude);
         MapViewPosition position = mMapView.getMapViewPosition();
@@ -417,22 +416,21 @@ public class MapMapsForge extends MapActivity implements LocationListener {
     }
 
     /**
-     * resets the gps location whenever the provider is enabled
+     * updates the gps location whenever the provider is enabled
      */
     public void onProviderEnabled(String provider) {
         setCurrentGpsLocation(null);
     }
 
     /**
-     * resets the gps location whenever the provider is disabled
+     * updates the gps location whenever the provider is disabled
      */
     public void onProviderDisabled(String provider) {
         setCurrentGpsLocation(null);
     }
 
     /**
-     * resets the gps location whenever the provider status changes
-     * we don't care about the details
+     * updates the gps location whenever the provider status changes
      */
     public void onStatusChanged(String provider, int status, Bundle extras) {
         setCurrentGpsLocation(null);
@@ -454,7 +452,7 @@ public class MapMapsForge extends MapActivity implements LocationListener {
         wayPaint.setStyle(Paint.Style.STROKE);
         wayPaint.setColor(Color.BLUE);
         wayPaint.setAlpha(128);
-        wayPaint.setStrokeWidth(8);
+        wayPaint.setStrokeWidth(10);
         wayPaint.setStrokeJoin(Paint.Join.ROUND);
 
         GPXParser parser = new GPXParser(routeFile);

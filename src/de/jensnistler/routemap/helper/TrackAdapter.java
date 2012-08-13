@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.activities.MapMapsForge;
+import de.jensnistler.routemap.activities.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,7 +24,7 @@ public class TrackAdapter extends ArrayAdapter<TrackModel> {
         super(context, textViewResourceId, items);
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        mPreferenceDistanceUnit = prefs.getString("distance", MapMapsForge.DISTANCE_MILES);
+        mPreferenceDistanceUnit = prefs.getString("distance", Map.DISTANCE_MILES);
         mContext = context;
         mItems = items;
 
@@ -64,7 +64,7 @@ public class TrackAdapter extends ArrayAdapter<TrackModel> {
                 String unit = mContext.getResources().getString(R.string.km);
 
                 // convert to miles
-                if (mPreferenceDistanceUnit.equals(MapMapsForge.DISTANCE_MILES)) {
+                if (mPreferenceDistanceUnit.equals(Map.DISTANCE_MILES)) {
                     length = length / 1.609344f;
                     unit = mContext.getResources().getString(R.string.mi);
                 }

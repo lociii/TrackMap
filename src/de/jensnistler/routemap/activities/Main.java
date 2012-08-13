@@ -59,7 +59,7 @@ public class Main extends PreferenceActivity {
             }
 
             // show map
-            Intent mapActivity = new Intent(getBaseContext(), MapMapsForge.class);
+            Intent mapActivity = new Intent(getBaseContext(), Map.class);
             mapActivity.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(mapActivity);
         }

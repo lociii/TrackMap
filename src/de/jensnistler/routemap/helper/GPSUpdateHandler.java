@@ -2,13 +2,13 @@ package de.jensnistler.routemap.helper;
 
 import android.os.Handler;
 import android.os.Message;
-import de.jensnistler.routemap.activities.MapMapsForge;
+import de.jensnistler.routemap.activities.Map;
 
 public class GPSUpdateHandler extends Handler {
     public static final int UPDATE_LOCATION = 1;
-    private MapMapsForge mActivity;
+    private Map mActivity;
 
-    public GPSUpdateHandler(MapMapsForge activity) {
+    public GPSUpdateHandler(Map activity) {
         mActivity = activity;
     }
 
