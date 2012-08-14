@@ -79,7 +79,8 @@ public class Map extends MapActivity implements LocationListener {
     private LocationManager mLocationManager;
     private double mLatitude;
     private double mLongitude;
-    private Thread mThread;
+    private Thread mLocationThread;
+    private LocationThreadRunner mLocationThreadRunner;
     private Handler mHandler = new Handler();
     private Runnable mDimRunnable;
     private GPSUpdateHandler mUpdateHandler;
@@ -172,6 +173,10 @@ public class Map extends MapActivity implements LocationListener {
                 WindowManager.LayoutParams params = getWindow().getAttributes();
                 params.screenBrightness = 0.05f;
                 getWindow().setAttributes(params);
+
+                if (mLocationThreadRunner instanceof LocationThreadRunner) {
+                    mLocationThreadRunner.setWaitTimeout(LocationThreadRunner.TIMEOUT_LONG);
+                }
             }
         };
 
@@ -305,8 +310,9 @@ public class Map extends MapActivity implements LocationListener {
 
         // start gps thread
         this.setCurrentGpsLocation(null);
-        mThread = new Thread(new LocationThreadRunner(mUpdateHandler));
-        mThread.start();
+        mLocationThreadRunner = new LocationThreadRunner(mUpdateHandler);
+        mLocationThread = new Thread(mLocationThreadRunner);
+        mLocationThread.start();
         this.updateMyLocation();
     }
 
@@ -319,6 +325,11 @@ public class Map extends MapActivity implements LocationListener {
         // reset dim timeout
         mHandler.removeCallbacks(mDimRunnable);
         handlePreferenceDim();
+
+        // get fast gps updates
+        if (mLocationThreadRunner instanceof LocationThreadRunner) {
+            mLocationThreadRunner.setWaitTimeout(LocationThreadRunner.TIMEOUT_LONG);
+        }
     }
 
     @Override
@@ -327,7 +338,7 @@ public class Map extends MapActivity implements LocationListener {
         mHandler.removeCallbacks(mDimRunnable);
 
         // stop gps update handler
-        mThread.interrupt();
+        mLocationThread.interrupt();
 
         super.onPause();
     }
