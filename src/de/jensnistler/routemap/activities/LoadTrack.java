@@ -95,10 +95,18 @@ public class LoadTrack extends FragmentActivity {
         // clear list
         mDataSource.deleteAll();
 
-        // get fresh data for tracklist and notepad
-        TrackAdapter adapterTracks = ((TrackListAbstract) getSupportFragmentManager().findFragmentByTag("tracks")).getAdapter();
-        new TrackListUpdater(this, mDataSource, adapterTracks, TrackListUpdater.URL_TRACKS).execute(mPreferenceUser);
-        TrackAdapter adapterNotepad = ((TrackListAbstract) getSupportFragmentManager().findFragmentByTag("notepad")).getAdapter();
-        new TrackListUpdater(this, mDataSource, adapterNotepad, TrackListUpdater.URL_NOTEPAD).execute(mPreferenceUser);
+        TrackListAbstract tracksFragment = (TrackListAbstract) getSupportFragmentManager().findFragmentByTag("tracks");
+        TrackAdapter tracksAdapter = null;
+        if (null != tracksFragment) {
+            tracksAdapter = tracksFragment.getAdapter();
+        }
+        new TrackListUpdater(this, mDataSource, tracksAdapter, TrackListUpdater.URL_TRACKS).execute(mPreferenceUser);
+
+        TrackListAbstract notepadFragment = (TrackListAbstract) getSupportFragmentManager().findFragmentByTag("notepad");
+        TrackAdapter notepadAdapter = null;
+        if (null != notepadFragment) {
+            notepadAdapter = notepadFragment.getAdapter();
+        }
+        new TrackListUpdater(this, mDataSource, notepadAdapter, TrackListUpdater.URL_NOTEPAD).execute(mPreferenceUser);
     }
 }

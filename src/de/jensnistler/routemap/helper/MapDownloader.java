@@ -8,8 +8,8 @@ import java.net.URL;
 
 import de.jensnistler.routemap.R;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
@@ -17,12 +17,12 @@ import android.widget.Toast;
 
 public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
     private boolean mRunning = true;
-    private Context mContext;
+    private Activity mContext;
     private MapAdapter mAdapter;
     private MapDataSource mDataSource;
     private ProgressDialog mDialog;
 
-    public MapDownloader(Context context, MapAdapter adapter, MapDataSource dataSource) {
+    public MapDownloader(Activity context, MapAdapter adapter, MapDataSource dataSource) {
         mContext = context;
         mAdapter = adapter;
         mDataSource = dataSource;
@@ -31,6 +31,9 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
 
     protected void onPreExecute() {
         mAdapter.setNotifyOnChange(false);
+
+        // keep screen on while downloading
+        mContext.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mDialog.setMessage(mContext.getResources().getString(R.string.downloading));
         mDialog.setCancelable(true);
@@ -115,6 +118,9 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
 
     protected void onPostExecute(Integer count) {
         mDialog.dismiss();
+
+        // finish keep screen on while downloading
+        mContext.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         mAdapter.setNotifyOnChange(true);
         if (count > 0) {

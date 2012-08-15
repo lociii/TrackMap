@@ -14,18 +14,18 @@ import org.json.JSONObject;
 
 import de.jensnistler.routemap.R;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
 public class MapListUpdater extends AsyncTask<String, Integer, Integer> {
-    private Context mContext;
+    private Activity mContext;
     private MapAdapter mAdapter;
     private MapDataSource mDataSource;
     private ProgressDialog mDialog;
 
-    public MapListUpdater(Context context, MapAdapter adapter, MapDataSource dataSource) {
+    public MapListUpdater(Activity context, MapAdapter adapter, MapDataSource dataSource) {
         mContext = context;
         mAdapter = adapter;
         mDataSource = dataSource;
@@ -33,6 +33,9 @@ public class MapListUpdater extends AsyncTask<String, Integer, Integer> {
     }
 
     protected void onPreExecute() {
+        // keep screen on while downloading
+        mContext.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         mDialog.setCancelable(true);
         mDialog.setMessage(mContext.getResources().getString(R.string.loading));
         mDialog.show();
@@ -95,6 +98,9 @@ public class MapListUpdater extends AsyncTask<String, Integer, Integer> {
 
     protected void onPostExecute(Integer count) {
         mDialog.dismiss();
+
+        // finish keep screen on while downloading
+        mContext.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (count > 0) {
             mAdapter.clear();

@@ -15,8 +15,8 @@ import org.w3c.dom.NodeList;
 
 import de.jensnistler.routemap.R;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -28,13 +28,13 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
     private static final String API_KEY = "cvghivivbcmwbsgs";
     private static final Integer LIMIT = 100;
 
-    private Context mContext;
+    private Activity mContext;
     private TrackDataSource mDataSource;
     private TrackAdapter mAdapter;
     private ProgressDialog mDialog;
     private String mUrl;
 
-    public TrackListUpdater(Context context, TrackDataSource dataSource, TrackAdapter adapter, String url) {
+    public TrackListUpdater(Activity context, TrackDataSource dataSource, TrackAdapter adapter, String url) {
         mContext = context;
         mDataSource = dataSource;
         mAdapter = adapter;
@@ -43,6 +43,9 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
     }
 
     protected void onPreExecute() {
+        // keep screen on while downloading
+        mContext.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         mDialog.setCancelable(true);
         mDialog.setMessage(mContext.getResources().getString(R.string.loading));
         mDialog.show();
@@ -134,6 +137,9 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
 
     protected void onPostExecute(Integer count) {
         mDialog.dismiss();
+
+        // finish keep screen on while downloading
+        mContext.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (count == 0) {
             Toast.makeText(mContext, R.string.updateFailed, Toast.LENGTH_LONG).show();

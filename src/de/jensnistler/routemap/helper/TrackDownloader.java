@@ -8,8 +8,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -22,15 +22,18 @@ import de.jensnistler.routemap.activities.Main;
 
 public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
     private boolean mRunning = true;
-    private Context mContext;
+    private Activity mContext;
     private ProgressDialog mDialog;
 
-    public TrackDownloader(Context context) {
+    public TrackDownloader(Activity context) {
         mContext = context;
         mDialog = new ProgressDialog(mContext);
     }
 
     protected void onPreExecute() {
+        // keep screen on while downloading
+        mContext.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
         mDialog.setMessage(mContext.getResources().getString(R.string.downloading));
         mDialog.setCancelable(true);
         mDialog.setOnCancelListener(new OnCancelListener() {
@@ -126,6 +129,9 @@ public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
 
     protected void onPostExecute(Integer count) {
         mDialog.dismiss();
+
+        // finish keep screen on while downloading
+        mContext.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (count > 0) {
             Intent mainActivity = new Intent(mContext, Main.class);
