@@ -56,4 +56,6 @@
     <string name="mapStatus">Status</string>
     <string name="loadMapRequired">Please load a map to continue</string>
     <string name="loadMap">Load map</string>
+    <string name="myTracks">My tracks</string>
+    <string name="notepad">Notepad</string>
 </resources>

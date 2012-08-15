@@ -56,4 +56,6 @@
     <string name="mapStatus">Status</string>
     <string name="loadMapRequired">Bitte lade eine Karte zum Fortfahren</string>
     <string name="loadMap">Karte laden</string>
+    <string name="myTracks">Meine Strecken</string>
+    <string name="notepad">Merkzettel</string>
 </resources>

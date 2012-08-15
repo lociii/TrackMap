@@ -16,7 +16,8 @@ public class TrackDataSource {
         DatabaseHelper.colKey,
         DatabaseHelper.colDescription,
         DatabaseHelper.colLink,
-        DatabaseHelper.colLength
+        DatabaseHelper.colLength,
+        DatabaseHelper.colType
     };
 
     public TrackDataSource(Context context) {
@@ -37,6 +38,7 @@ public class TrackDataSource {
         values.put(DatabaseHelper.colDescription, track.getDescription());
         values.put(DatabaseHelper.colLink, track.getLink());
         values.put(DatabaseHelper.colLength, track.getLength());
+        values.put(DatabaseHelper.colType, track.getType());
 
         // check if dataset exists
         Cursor cursor = mDatabase.query(DatabaseHelper.trackTable, allColumns, "Key=?", new String[] { track.getKey() }, null, null, null);
@@ -67,10 +69,10 @@ public class TrackDataSource {
         return null;
     }
 
-    public ArrayList<TrackModel> getAllTracks() {
+    public ArrayList<TrackModel> getAllTracks(Integer Type) {
         ArrayList<TrackModel> tracks = new ArrayList<TrackModel>();
 
-        Cursor cursor = mDatabase.query(DatabaseHelper.trackTable, allColumns, null, null, null, null, null);
+        Cursor cursor = mDatabase.query(DatabaseHelper.trackTable, allColumns, "Type=?", new String[] { Type.toString() }, null, null, null);
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             TrackModel track = cursorToTrack(cursor);
@@ -87,6 +89,7 @@ public class TrackDataSource {
         track.setDescription(cursor.getString(1));
         track.setLink(cursor.getString(2));
         track.setLength(cursor.getFloat(3));
+        track.setType(cursor.getInt(4));
 
         return track;
     }

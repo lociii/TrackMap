@@ -16,6 +16,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String colUpdated = "Updated";
     public static final String colLength = "Length";
     public static final String colLink = "Link";
+    public static final String colType = "Type";
 
     public DatabaseHelper(Context context) {
         super(context, dbName, null, 1); 
@@ -36,7 +37,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + colKey + " TEXT PRIMARY KEY, "
                 + colDescription + " TEXT, "
                 + colLink + " TEXT, "
-                + colLength + " REAL "
+                + colLength + " REAL, "
+                + colType + " INTEGER "
                 + ");"
             );
     }

@@ -1,10 +1,14 @@
 package de.jensnistler.routemap.helper;
 
 public class TrackModel {
+    public final static Integer TYPE_MY_TRACKS = 1;
+    public final static Integer TYPE_NOTEPAD = 2;
+
     private String Key;
     private String Description;
     private String Link;
     private Float Length;
+    private Integer Type;
 
     public TrackModel(String Key) {
         this.Key = Key;
@@ -40,6 +44,14 @@ public class TrackModel {
 
     public void setLength(Float Length) {
         this.Length = Length;
+    }
+    
+    public Integer getType() {
+        return Type;
+    }
+
+    public void setType(Integer Type) {
+        this.Type = Type;
     }
 
 	// will be used by the ArrayAdapter in the ListView

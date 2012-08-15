@@ -505,7 +505,7 @@ public class Map extends MapActivity implements LocationListener {
                 startActivity(new Intent(getBaseContext(), ManageMaps.class));
                 return true;
             case R.id.menu_loadfromgpsies:
-                startActivity(new Intent(getBaseContext(), LoadTrackFromGpsies.class));
+                startActivity(new Intent(getBaseContext(), LoadTrack.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

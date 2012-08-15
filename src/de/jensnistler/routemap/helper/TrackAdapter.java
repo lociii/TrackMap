@@ -2,6 +2,7 @@ package de.jensnistler.routemap.helper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Iterator;
 
 import de.jensnistler.routemap.R;
 import de.jensnistler.routemap.activities.Map;
@@ -16,24 +17,36 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 public class TrackAdapter extends ArrayAdapter<TrackModel> {
-    private ArrayList<TrackModel> mItems;
     private Context mContext;
     private String mPreferenceDistanceUnit;
+    private TrackDataSource mDataSource;
+    private Integer mType;
 
-    public TrackAdapter(Context context, int textViewResourceId, ArrayList<TrackModel> items) {
-        super(context, textViewResourceId, items);
+    public TrackAdapter(Context context, int textViewResourceId, TrackDataSource dataSource, Integer type) {
+        super(context, textViewResourceId, new ArrayList<TrackModel>());
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         mPreferenceDistanceUnit = prefs.getString("distance", Map.DISTANCE_MILES);
         mContext = context;
-        mItems = items;
+        mDataSource = dataSource;
+        mType = type;
+    }
 
+    public void loadData() {
+        clear();
+        ArrayList<TrackModel> tracks = mDataSource.getAllTracks(mType);
+        Iterator<TrackModel> iterator = tracks.iterator();
+        while (iterator.hasNext()) {
+            TrackModel track = iterator.next();
+            add(track);
+        }
         sortData();
+
+        notifyDataSetChanged();
     }
 
     public void add(TrackModel track) {
         super.add(track);
-        sortData();
     }
 
     private void sortData() {
@@ -51,8 +64,9 @@ public class TrackAdapter extends ArrayAdapter<TrackModel> {
             LayoutInflater vi = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             v = vi.inflate(R.layout.load_tracks_row, null);
         }
+        
 
-        TrackModel track = mItems.get(position);
+        TrackModel track = getItem(position);
         if (track != null) {
             TextView tt = (TextView) v.findViewById(R.id.toptext);
             if (tt != null) {

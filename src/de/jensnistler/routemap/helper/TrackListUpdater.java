@@ -1,8 +1,6 @@
 package de.jensnistler.routemap.helper;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -31,15 +29,15 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
     private static final Integer LIMIT = 100;
 
     private Context mContext;
-    private TrackAdapter mAdapter;
     private TrackDataSource mDataSource;
+    private TrackAdapter mAdapter;
     private ProgressDialog mDialog;
     private String mUrl;
 
-    public TrackListUpdater(Context context, TrackAdapter adapter, TrackDataSource dataSource, String url) {
+    public TrackListUpdater(Context context, TrackDataSource dataSource, TrackAdapter adapter, String url) {
         mContext = context;
-        mAdapter = adapter;
         mDataSource = dataSource;
+        mAdapter = adapter;
         mDialog = new ProgressDialog(mContext);
         mUrl = url;
     }
@@ -54,12 +52,14 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
         int trackCount = 0;
         XPathExpression xpathTrack;
         XPathExpression xpathResultSize;
+        XPathExpression xPathResultType;
 
         XPathFactory xpathFactory = XPathFactory.newInstance();
         XPath xpath = xpathFactory.newXPath();
         try {
             xpathTrack = xpath.compile("/gpsies/tracks/track");
             xpathResultSize = xpath.compile("/gpsies/meta/resultSize");
+            xPathResultType = xpath.compile("/gpsies/meta/searchNotepadname");
         }
         catch (Exception e) {
             return 0;
@@ -80,6 +80,13 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
                     // get tracks
                     NodeList tracks = (NodeList) xpathTrack.evaluate(doc, XPathConstants.NODESET);
 
+                    // get type
+                    Integer nodeType = TrackModel.TYPE_MY_TRACKS;
+                    NodeList resultTypeNodes = (NodeList) xPathResultType.evaluate(doc, XPathConstants.NODESET);
+                    if (resultTypeNodes.getLength() == 1) {
+                        nodeType = TrackModel.TYPE_NOTEPAD;
+                    }
+
                     // loop tracks
                     for (int i = 0; i < tracks.getLength(); i++) {
                         Element track = (Element) tracks.item(i);
@@ -96,6 +103,7 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
                         model.setDescription(description);
                         model.setLength(length);
                         model.setLink(link);
+                        model.setType(nodeType);
                         mDataSource.saveTrack(model);
 
                         trackCount++;
@@ -103,7 +111,7 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
 
                     // check for last result page
                     NodeList resultSizeNodes = (NodeList) xpathResultSize.evaluate(doc, XPathConstants.NODESET);
-                    if (Integer.parseInt(resultSizeNodes.item(0).getTextContent()) < LIMIT) {
+                    if (resultSizeNodes.getLength() == 0 || Integer.parseInt(resultSizeNodes.item(0).getTextContent()) < LIMIT) {
                         break;
                     }
 
@@ -127,18 +135,13 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
     protected void onPostExecute(Integer count) {
         mDialog.dismiss();
 
-        if (count > 0) {
-            mAdapter.clear();
-            ArrayList<TrackModel> tracks = mDataSource.getAllTracks();
-            Iterator<TrackModel> iterator = tracks.iterator();
-            while (iterator.hasNext()) {
-                TrackModel track = iterator.next();
-                mAdapter.add(track);
-            }
-            mAdapter.notifyDataSetChanged();
-        }
-        else {
+        if (count == 0) {
             Toast.makeText(mContext, R.string.updateFailed, Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        if (mAdapter instanceof TrackAdapter) {
+            mAdapter.loadData();
         }
     }
 }

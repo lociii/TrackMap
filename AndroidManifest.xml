@@ -60,7 +60,7 @@
             android:label="@string/preferences" >
         </activity>
         <activity
-            android:name=".activities.LoadTrackFromGpsies"
+            android:name=".activities.LoadTrack"
             android:label="@string/loadTrackFromGpsies" >
         </activity>
     </application>
