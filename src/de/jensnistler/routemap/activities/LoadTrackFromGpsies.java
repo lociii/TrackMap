@@ -62,7 +62,8 @@ public class LoadTrackFromGpsies extends ListActivity {
 
     private void updateTrackList() {
         mDataSource.deleteAll();
-        new TrackListUpdater(this, this.mAdapter, this.mDataSource).execute(mPreferenceUser);
+
+        new TrackListUpdater(this, this.mAdapter, this.mDataSource, TrackListUpdater.URL_TRACKS).execute(mPreferenceUser);
     }
 
     public void onListItemClick(ListView l, View v, int position, long id) {

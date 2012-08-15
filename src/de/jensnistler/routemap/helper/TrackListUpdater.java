@@ -25,7 +25,8 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
-    private static final String URL = "http://www.gpsies.com/api.do?key=%s&username=%s&limit=%s&filetype=gpxtrk&resultPage=%s";
+    public static final String URL_TRACKS = "http://www.gpsies.com/api.do?key=%s&username=%s&limit=%s&filetype=gpxtrk&resultPage=%s";
+    public static final String URL_NOTEPAD = "http://www.gpsies.com/api.do?key=%s&searchNotepadname=%s&limit=%s&filetype=gpxtrk&resultPage=%s";
     private static final String API_KEY = "cvghivivbcmwbsgs";
     private static final Integer LIMIT = 100;
 
@@ -33,12 +34,14 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
     private TrackAdapter mAdapter;
     private TrackDataSource mDataSource;
     private ProgressDialog mDialog;
+    private String mUrl;
 
-    public TrackListUpdater(Context context, TrackAdapter adapter, TrackDataSource dataSource) {
+    public TrackListUpdater(Context context, TrackAdapter adapter, TrackDataSource dataSource, String url) {
         mContext = context;
         mAdapter = adapter;
         mDataSource = dataSource;
         mDialog = new ProgressDialog(mContext);
+        mUrl = url;
     }
 
     protected void onPreExecute() {
@@ -68,7 +71,7 @@ public class TrackListUpdater extends AsyncTask<String, Integer, Integer> {
             // loop until all tracks have been found
             try {
                 while (true) {
-                    String url = String.format(URL, API_KEY, username, LIMIT, page);
+                    String url = String.format(mUrl, API_KEY, username, LIMIT, page);
 
                     DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
                     DocumentBuilder docBuilder = docFactory.newDocumentBuilder();

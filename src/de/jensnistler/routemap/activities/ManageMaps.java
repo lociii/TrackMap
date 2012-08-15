@@ -112,8 +112,9 @@ public class ManageMaps extends ListActivity {
                 mAdapter.notifyDataSetChanged();
                 break;
 
-            // download
+            // update
             case 1:
+            // download
             case 3:
                 new MapDownloader(this, mAdapter, mDataSource).execute(contextSelection);
                 break;

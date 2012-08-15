@@ -50,8 +50,10 @@
     <string name="dim60">Nach 60 Sekunden</string>
     <string name="downloadFailed">Download fehlgeschlagen, bitte Netzwerkeinstellungen prüfen</string>
     <string name="updateFailed">Aktualisierung fehlgeschlagen, bitte Netzwerkeinstellungen prüfen</string>
-    <string name="activityManageMaps">Karten verwalten</string>
-    <string name="activityPreferences">Einstellungen</string>
-    <string name="activityLoadGpsies">Lade Strecke von gpsies.com</string>
+    <string name="manageMaps">Karten verwalten</string>
+    <string name="preferences">Einstellungen</string>
+    <string name="loadTrackFromGpsies">Lade Strecke von gpsies.com</string>
     <string name="mapStatus">Status</string>
+    <string name="loadMapRequired">Bitte lade eine Karte zum Fortfahren</string>
+    <string name="loadMap">Karte laden</string>
 </resources>

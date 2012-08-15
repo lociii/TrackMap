@@ -50,8 +50,10 @@
     <string name="dim60">After 60 seconds</string>
     <string name="downloadFailed">Download failed, please check network settings</string>
     <string name="updateFailed">Update failed, please check network settings</string>
-    <string name="activityManageMaps">Manage maps</string>
-    <string name="activityPreferences">Preferences</string>
-    <string name="activityLoadGpsies">Load track from gpsies.com</string>
+    <string name="manageMaps">Manage maps</string>
+    <string name="preferences">Preferences</string>
+    <string name="loadTrackFromGpsies">Load track from gpsies.com</string>
     <string name="mapStatus">Status</string>
+    <string name="loadMapRequired">Please load a map to continue</string>
+    <string name="loadMap">Load map</string>
 </resources>

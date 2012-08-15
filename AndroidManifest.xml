@@ -53,15 +53,15 @@
         </activity>
         <activity
             android:name=".activities.ManageMaps"
-            android:label="@string/activityManageMaps" >
+            android:label="@string/manageMaps" >
         </activity>
         <activity
             android:name=".activities.Preferences"
-            android:label="@string/activityPreferences" >
+            android:label="@string/preferences" >
         </activity>
         <activity
             android:name=".activities.LoadTrackFromGpsies"
-            android:label="@string/activityLoadGpsies" >
+            android:label="@string/loadTrackFromGpsies" >
         </activity>
     </application>
 </manifest>

@@ -30,7 +30,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.preference.PreferenceManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -197,8 +196,6 @@ public class Map extends MapActivity implements LocationListener {
 
         mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
             public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                Log.e("prefs", "changed: " + key);
-
                 if (key.equals("standby")) {
                     mPreferenceStandby = prefs.getBoolean("standby", false);
                     handlePreferenceStandby();
@@ -501,7 +498,7 @@ public class Map extends MapActivity implements LocationListener {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.menu_settings:
+            case R.id.menu_preferences:
                 startActivity(new Intent(getBaseContext(), Preferences.class));
                 return true;
             case R.id.menu_managemaps:
