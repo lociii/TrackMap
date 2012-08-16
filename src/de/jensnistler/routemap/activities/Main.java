@@ -36,6 +36,7 @@ public class Main extends Activity implements LocationListener {
     private Boolean mUsername = null;
     private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener;
     private SharedPreferences mPreferences;
+    private LocationManager mLocationManager;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,8 +79,9 @@ public class Main extends Activity implements LocationListener {
         });
 
         // set initial gps state
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        mGpsAvailable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        mLocationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        mGpsAvailable = mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
 
         // set initial peference states
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
@@ -95,6 +97,8 @@ public class Main extends Activity implements LocationListener {
                 else if (key.equals("gpsiesUsername")) {
                     checkUsername();
                 }
+
+                updateState();
             }
         };
         mPreferences.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
@@ -134,7 +138,7 @@ public class Main extends Activity implements LocationListener {
 
     protected void onResume() {
         super.onResume();
-        setState();
+        updateState();
     }
 
     public void onLocationChanged(Location newLocation) {
@@ -142,18 +146,24 @@ public class Main extends Activity implements LocationListener {
     }
 
     public void onProviderEnabled(String provider) {
-        mGpsAvailable = true;
+        if (provider.equals(LocationManager.GPS_PROVIDER)) {
+            mGpsAvailable = true;
+        }
+        updateState();
     }
 
     public void onProviderDisabled(String provider) {
-        mGpsAvailable = false;
+        if (provider.equals(LocationManager.GPS_PROVIDER)) {
+            mGpsAvailable = false;
+        }
+        updateState();
     }
 
     public void onStatusChanged(String provider, int status, Bundle extras) {
         return;
     }
 
-    private void setState() {
+    private void updateState() {
         mStep1Image.setImageResource(R.drawable.map_add);
         if (mMap) {
             mStep1Image.setImageResource(R.drawable.map_ok);
