@@ -4,7 +4,6 @@
     android:gravity="top"
     android:orientation="vertical" >
     <ImageView
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -13,28 +12,87 @@
         android:paddingTop="30dip"
         android:scrollbars="none"
         android:src="@drawable/application" />
-    <TextView
-        android:id="@+id/step1"
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/map_add"
-        android:text="@string/stepLoadMap" />
-    <TextView
-        android:id="@+id/step2"
+        android:gravity="top"
+        android:orientation="horizontal"
+        android:paddingBottom="10dip" >
+        <ImageView
+            android:id="@+id/step1Image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/stepLoadMap"
+            android:scrollbars="none"
+            android:src="@drawable/map_add" />
+        <TextView
+            android:id="@+id/step1Text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:paddingRight="10dip"
+            android:text="@string/step1" />
+        <Button
+            android:id="@+id/step1Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/stepLoadMap" />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/map_add"
-        android:text="@string/stepSetUsername" >
-    </TextView>
-    <TextView
-        android:id="@+id/step3"
+        android:gravity="top"
+        android:orientation="horizontal"
+        android:paddingBottom="10dip" >
+        <ImageView
+            android:id="@+id/step2Image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/stepSetUsername"
+            android:scrollbars="none"
+            android:src="@drawable/map_add" />
+        <TextView
+            android:id="@+id/step2Text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:paddingRight="10dip"
+            android:text="@string/step2" />
+        <Button
+            android:id="@+id/step2Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/stepSetUsername" />
+    </LinearLayout>
+    <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:drawableLeft="@drawable/map_add"
-        android:text="@string/stepActivateGPS" />
+        android:gravity="top"
+        android:orientation="horizontal"
+        android:paddingBottom="10dip" >
+        <ImageView
+            android:id="@+id/step3Image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/stepActivateGPS"
+            android:scrollbars="none"
+            android:src="@drawable/map_add" />
+        <TextView
+            android:id="@+id/step3Text"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:paddingRight="10dip"
+            android:text="@string/step3" />
+        <Button
+            android:id="@+id/step3Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="@string/stepActivateGPS" />
+    </LinearLayout>
     <Button
         android:id="@+id/buttonShowMap"
         android:layout_width="match_parent"

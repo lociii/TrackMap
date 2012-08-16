@@ -18,14 +18,17 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.ImageView;
 import android.widget.Toast;
 import de.jensnistler.routemap.R;
 
 public class Main extends Activity implements LocationListener {
-    private TextView mStep1;
-    private TextView mStep2;
-    private TextView mStep3;
+    private Button mStep1Button;
+    private ImageView mStep1Image;
+    private Button mStep2Button;
+    private ImageView mStep2Image;
+    private Button mStep3Button;
+    private ImageView mStep3Image;
     private Button mShowMap;
 
     private Boolean mGpsAvailable = false;
@@ -41,22 +44,25 @@ public class Main extends Activity implements LocationListener {
         // save style xml to cache
         //saveStyleXML();
 
-        mStep1 = (TextView) findViewById(R.id.step1);
-        mStep1.setOnClickListener(new View.OnClickListener() {
+        mStep1Image = (ImageView) findViewById(R.id.step1Image);
+        mStep1Button = (Button) findViewById(R.id.step1Button);
+        mStep1Button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(getBaseContext(), ManageMaps.class));
             }
         });
 
-        mStep2 = (TextView) findViewById(R.id.step2);
-        mStep2.setOnClickListener(new View.OnClickListener() {
+        mStep2Image = (ImageView) findViewById(R.id.step2Image);
+        mStep2Button = (Button) findViewById(R.id.step2Button);
+        mStep2Button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(getBaseContext(), Preferences.class));
             }
         });
 
-        mStep3 = (TextView) findViewById(R.id.step3);
-        mStep3.setOnClickListener(new View.OnClickListener() {
+        mStep3Image = (ImageView) findViewById(R.id.step3Image);
+        mStep3Button = (Button) findViewById(R.id.step3Button);
+        mStep3Button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
             }
@@ -116,12 +122,12 @@ public class Main extends Activity implements LocationListener {
                 }
                 else {
                     Toast.makeText(this, R.string.selecteMapNotExists, Toast.LENGTH_LONG).show();
-                    mStep1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+                    mStep1Image.setImageResource(R.drawable.map_add);
                 }
             }
             else {
                 Toast.makeText(this, R.string.cannotReadFromCache, Toast.LENGTH_LONG).show();
-                mStep1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+                mStep1Image.setImageResource(R.drawable.map_add);
             }
         }
     }
@@ -148,19 +154,19 @@ public class Main extends Activity implements LocationListener {
     }
 
     private void setState() {
-        mStep1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+        mStep1Image.setImageResource(R.drawable.map_add);
         if (mMap) {
-            mStep1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_ok, 0, 0, 0);
+            mStep1Image.setImageResource(R.drawable.map_ok);
         }
-        
-        mStep2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+
+        mStep2Image.setImageResource(R.drawable.map_add);
         if (mUsername) {
-            mStep2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_ok, 0, 0, 0);
+            mStep2Image.setImageResource(R.drawable.map_ok);
         }
-        
-        mStep3.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+
+        mStep3Image.setImageResource(R.drawable.map_add);
         if (mGpsAvailable) {
-            mStep3.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_ok, 0, 0, 0);
+            mStep3Image.setImageResource(R.drawable.map_ok);
         }
         
         mShowMap.setEnabled(false);
