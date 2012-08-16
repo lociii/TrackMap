@@ -10,7 +10,6 @@
         android:contentDescription="@string/applicationName"
         android:paddingBottom="40dip"
         android:paddingTop="30dip"
-        android:scrollbars="none"
         android:src="@drawable/application" />
     <LinearLayout
         android:layout_width="fill_parent"
@@ -22,13 +21,13 @@
             android:id="@+id/step1Image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:contentDescription="@string/stepLoadMap"
-            android:scrollbars="none"
             android:src="@drawable/map_add" />
         <TextView
             android:id="@+id/step1Text"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingRight="10dip"
             android:text="@string/step1" />
@@ -49,13 +48,13 @@
             android:id="@+id/step2Image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:contentDescription="@string/stepSetUsername"
-            android:scrollbars="none"
             android:src="@drawable/map_add" />
         <TextView
             android:id="@+id/step2Text"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingRight="10dip"
             android:text="@string/step2" />
@@ -76,13 +75,13 @@
             android:id="@+id/step3Image"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:contentDescription="@string/stepActivateGPS"
-            android:scrollbars="none"
             android:src="@drawable/map_add" />
         <TextView
             android:id="@+id/step3Text"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:paddingRight="10dip"
             android:text="@string/step3" />
