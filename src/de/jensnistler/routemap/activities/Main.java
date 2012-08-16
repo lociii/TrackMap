@@ -1,95 +1,174 @@
 package de.jensnistler.routemap.activities;
 
 import java.io.File;
+/*
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+*/
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.preference.PreferenceActivity;
 import android.preference.PreferenceManager;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 import de.jensnistler.routemap.R;
 
-public class Main extends PreferenceActivity {
+public class Main extends Activity implements LocationListener {
+    private TextView mStep1;
+    private TextView mStep2;
+    private TextView mStep3;
+    private Button mShowMap;
+
+    private Boolean mGpsAvailable = false;
+    private Boolean mMap = null;
+    private Boolean mUsername = null;
+    private SharedPreferences.OnSharedPreferenceChangeListener mPreferenceChangeListener;
+    private SharedPreferences mPreferences;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
 
         // save style xml to cache
-        saveStyleXML();
+        //saveStyleXML();
 
-        // check for gps
+        mStep1 = (TextView) findViewById(R.id.step1);
+        mStep1.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(), ManageMaps.class));
+            }
+        });
+
+        mStep2 = (TextView) findViewById(R.id.step2);
+        mStep2.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(getBaseContext(), Preferences.class));
+            }
+        });
+
+        mStep3 = (TextView) findViewById(R.id.step3);
+        mStep3.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+            }
+        });
+
+        mShowMap = (Button) findViewById(R.id.buttonShowMap);
+        mShowMap.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(getBaseContext(), Map.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                startActivity(intent);
+            }
+        });
+
+        // set initial gps state
         LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            createGpsDisabledAlert();
+        mGpsAvailable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        // set initial peference states
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        checkUsername();
+        checkMapFile();
+
+        // listen to preference changes
+        mPreferenceChangeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                if (key.equals("mapFile")) {
+                    checkMapFile();
+                }
+                else if (key.equals("gpsiesUsername")) {
+                    checkUsername();
+                }
+            }
+        };
+        mPreferences.registerOnSharedPreferenceChangeListener(mPreferenceChangeListener);
+    }
+
+    private void checkUsername() {
+        mUsername = false;
+
+        String gpsiesUsername = mPreferences.getString("gpsiesUsername", null);
+        if (null != gpsiesUsername && 0 < gpsiesUsername.trim().length()) {
+            mUsername = true;
+        }
+    }
+
+    private void checkMapFile() {
+        mMap = false;
+
+        String mapFile = mPreferences.getString("mapFile", null);
+        if (null != mapFile && 0 < mapFile.trim().length()) {
+            File cacheDir = getExternalCacheDir();
+            if (null != cacheDir && cacheDir.canRead()) {
+                File cacheFile = new File(cacheDir, mapFile.replace("/", "_") + ".map");
+                if (cacheFile.exists() && cacheFile.canRead()) {
+                    mMap = true;
+                }
+                else {
+                    Toast.makeText(this, R.string.selecteMapNotExists, Toast.LENGTH_LONG).show();
+                    mStep1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+                }
+            }
+            else {
+                Toast.makeText(this, R.string.cannotReadFromCache, Toast.LENGTH_LONG).show();
+                mStep1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+            }
         }
     }
 
     protected void onResume() {
         super.onResume();
+        setState();
+    }
 
-        LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-            String preferenceMapFile = prefs.getString("mapFile", null);
-            if (null == preferenceMapFile) {
-                Toast.makeText(this, R.string.loadMapFile, Toast.LENGTH_LONG).show();
-                redirectToLoadMap();
-                return;
-            }
+    public void onLocationChanged(Location newLocation) {
+        return;
+    }
 
-            File cacheDir = getExternalCacheDir();
-            if (null == cacheDir || !cacheDir.canRead()) {
-                Toast.makeText(this, R.string.cannotReadFromCache, Toast.LENGTH_LONG).show();
-                redirectToLoadMap();
-                return;
-            }
+    public void onProviderEnabled(String provider) {
+        mGpsAvailable = true;
+    }
 
-            File cacheFile = new File(cacheDir, preferenceMapFile.replace("/", "_") + ".map");
-            if (!cacheFile.exists() || !cacheFile.canRead()) {
-                Toast.makeText(this, R.string.selecteMapNotExists, Toast.LENGTH_LONG).show();
-                redirectToLoadMap();
-                return;
-            }
+    public void onProviderDisabled(String provider) {
+        mGpsAvailable = false;
+    }
 
-            // show map
-            Intent mapActivity = new Intent(getBaseContext(), Map.class);
-            mapActivity.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            startActivity(mapActivity);
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        return;
+    }
+
+    private void setState() {
+        mStep1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+        if (mMap) {
+            mStep1.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_ok, 0, 0, 0);
+        }
+        
+        mStep2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+        if (mUsername) {
+            mStep2.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_ok, 0, 0, 0);
+        }
+        
+        mStep3.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_add, 0, 0, 0);
+        if (mGpsAvailable) {
+            mStep3.setCompoundDrawablesWithIntrinsicBounds(R.drawable.map_ok, 0, 0, 0);
+        }
+        
+        mShowMap.setEnabled(false);
+        if (mMap && mUsername && mGpsAvailable) {
+            mShowMap.setEnabled(true);
         }
     }
-
-    private void createGpsDisabledAlert(){
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.gpsRequired);
-        builder.setCancelable(false);
-        builder.setPositiveButton(R.string.enableGps, new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int id) {
-                  Intent gpsOptionsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);  
-                  startActivity(gpsOptionsIntent);
-              }
-         });
-         builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-              public void onClick(DialogInterface dialog, int id) {
-                   dialog.cancel();
-                   Main.this.finish();
-              }
-         });
-         AlertDialog alert = builder.create();
-         alert.show();
-    }
-
-    private void redirectToLoadMap() {
-        Intent mapActivity = new Intent(getBaseContext(), ManageMaps.class);
-        startActivity(mapActivity);
-    }
-
+/*
     private void saveStyleXML() {
         // get cache directory
         File cacheDir = getExternalCacheDir();
@@ -130,4 +209,5 @@ public class Main extends PreferenceActivity {
             return;
         }
     }
+*/
 }

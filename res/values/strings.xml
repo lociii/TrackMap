@@ -58,4 +58,8 @@
     <string name="loadMap">Load map</string>
     <string name="myTracks">My tracks</string>
     <string name="notepad">Notepad</string>
+    <string name="stepLoadMap">Step 1: Download a map</string>
+    <string name="stepSetUsername">Step 2: Set gpsies.com username</string>
+    <string name="stepActivateGPS">Step 3: Activate GPS</string>
+    <string name="showMap">Show map</string>
 </resources>
