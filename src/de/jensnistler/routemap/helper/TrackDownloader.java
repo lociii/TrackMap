@@ -18,7 +18,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.activities.Main;
+import de.jensnistler.routemap.activities.Map;
 
 public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
     private boolean mRunning = true;
@@ -134,8 +134,8 @@ public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
         mContext.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         if (count > 0) {
-            Intent mainActivity = new Intent(mContext, Main.class);
-            mContext.startActivity(mainActivity);
+            Intent mapActivity = new Intent(mContext, Map.class);
+            mContext.startActivity(mapActivity);
         }
         else {
             Toast.makeText(mContext, R.string.downloadFailed, Toast.LENGTH_LONG).show();

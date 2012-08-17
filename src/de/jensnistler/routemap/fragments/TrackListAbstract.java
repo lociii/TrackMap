@@ -3,7 +3,7 @@ package de.jensnistler.routemap.fragments;
 import java.io.File;
 
 import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.activities.Main;
+import de.jensnistler.routemap.activities.Map;
 import de.jensnistler.routemap.helper.TrackAdapter;
 import de.jensnistler.routemap.helper.TrackDataSource;
 import de.jensnistler.routemap.helper.TrackDownloader;
@@ -65,8 +65,8 @@ abstract public class TrackListAbstract extends ListFragment {
             editor.putString("routeFile", cacheFile.getAbsolutePath());
             editor.commit();
 
-            Intent mainActivity = new Intent(mContext, Main.class);
-            startActivity(mainActivity);
+            Intent mapActivity = new Intent(mContext, Map.class);
+            startActivity(mapActivity);
             return;
         }
 
