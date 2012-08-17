@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 
 import android.app.ListActivity;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -65,8 +64,7 @@ public class ManageMaps extends ListActivity {
             editor.putString("mapFile", selection.getKey());
             editor.commit();
 
-            Intent mainActivity = new Intent(getBaseContext(), Main.class);
-            startActivity(mainActivity);
+            finish();
         }
         else {
             v.showContextMenu();
