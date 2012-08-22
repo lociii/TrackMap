@@ -35,15 +35,17 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
         // keep screen on while downloading
         mContext.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mDialog.setMessage(mContext.getResources().getString(R.string.downloading));
         mDialog.setCancelable(true);
-        mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mDialog.setProgress(0);
         mDialog.setOnCancelListener(new OnCancelListener() {
             public void onCancel(DialogInterface dialog) {
                 mRunning = false;
             }
         });
+        mDialog.setIndeterminate(false);
+        mDialog.setMax(0);
         mDialog.show();
     }
 

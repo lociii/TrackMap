@@ -34,6 +34,7 @@ public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
         // keep screen on while downloading
         mContext.getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mDialog.setMessage(mContext.getResources().getString(R.string.downloading));
         mDialog.setCancelable(true);
         mDialog.setOnCancelListener(new OnCancelListener() {
@@ -41,6 +42,8 @@ public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
                 onCancelled();
             }
         });
+        mDialog.setIndeterminate(false);
+        mDialog.setMax(0);
         mDialog.show();
     }
 
@@ -122,7 +125,6 @@ public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
     }
 
     protected void onProgressUpdate(Integer... progress) {
-        mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mDialog.setMax(progress[0]);
         mDialog.setProgress(progress[1]);
     }
