@@ -38,7 +38,6 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
         mDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
         mDialog.setMessage(mContext.getResources().getString(R.string.downloading));
         mDialog.setCancelable(true);
-        mDialog.setProgress(0);
         mDialog.setOnCancelListener(new OnCancelListener() {
             public void onCancel(DialogInterface dialog) {
                 mRunning = false;
@@ -46,6 +45,7 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
         });
         mDialog.setIndeterminate(false);
         mDialog.setMax(0);
+        mDialog.setProgress(0);
         mDialog.show();
     }
 

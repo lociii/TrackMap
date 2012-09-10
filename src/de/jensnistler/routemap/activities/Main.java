@@ -178,7 +178,7 @@ public class Main extends Activity implements LocationListener {
         if (mGpsAvailable) {
             mStep3Image.setImageResource(R.drawable.map_ok);
         }
-        
+
         mShowMap.setEnabled(false);
         if (mMap && mUsername && mGpsAvailable) {
             mShowMap.setEnabled(true);

@@ -66,7 +66,7 @@ public class MapAdapter extends ArrayAdapter<MapModel> {
                         ic.setImageDrawable(mContext.getResources().getDrawable(R.drawable.map_ok));
                     }
                     else {
-                        ic.setImageDrawable(mContext.getResources().getDrawable(R.drawable.map_refresh));
+                        ic.setImageDrawable(mContext.getResources().getDrawable(R.drawable.update));
                     }
                 }
             }
