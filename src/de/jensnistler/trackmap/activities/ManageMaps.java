@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.activities;
+package de.jensnistler.trackmap.activities;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
-import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.helper.MapDataSource;
-import de.jensnistler.routemap.helper.MapAdapter;
-import de.jensnistler.routemap.helper.MapDownloader;
-import de.jensnistler.routemap.helper.MapListUpdater;
-import de.jensnistler.routemap.helper.MapModel;
+import de.jensnistler.trackmap.R;
+import de.jensnistler.trackmap.helper.MapAdapter;
+import de.jensnistler.trackmap.helper.MapDataSource;
+import de.jensnistler.trackmap.helper.MapDownloader;
+import de.jensnistler.trackmap.helper.MapListUpdater;
+import de.jensnistler.trackmap.helper.MapModel;
 
 public class ManageMaps extends ListActivity {
     private static String URL_MAP_LIST = "http://static.jensnistler.de/maps.json";

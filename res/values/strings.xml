@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="applicationName">RouteMap</string>
+    <string name="applicationName">TrackMap</string>
     <string name="noMaps">No maps found</string>
     <string name="noTracks">No tracks found</string>
     <string name="missingGpsiesUsername">Please set your gpsies.com username</string>
@@ -33,7 +33,7 @@
     <string name="updateList">Update list</string>
     <string name="update">Update</string>
     <string name="settingStandby">Deactivate standby</string>
-    <string name="settingStandbyLong">Deactivate standby while RouteMap is active</string>
+    <string name="settingStandbyLong">Deactivate standby while the map is active</string>
     <string name="settingRotate">Rotate map</string>
     <string name="settingRotateLong">Rotate map according to direction of travel</string>
     <string name="settingBrightness">Brightness</string>

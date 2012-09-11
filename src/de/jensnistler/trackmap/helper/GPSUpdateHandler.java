@@ -1,8 +1,8 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import android.os.Handler;
 import android.os.Message;
-import de.jensnistler.routemap.activities.Map;
+import de.jensnistler.trackmap.activities.Map;
 
 public class GPSUpdateHandler extends Handler {
     public static final int UPDATE_LOCATION = 1;

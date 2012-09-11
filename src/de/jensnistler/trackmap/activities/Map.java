@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.activities;
+package de.jensnistler.trackmap.activities;
 
 import java.io.File;
 import java.text.DecimalFormat;
@@ -39,12 +39,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
-import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.helper.GPSUpdateHandler;
-import de.jensnistler.routemap.helper.GPXParser;
-import de.jensnistler.routemap.helper.LocationThreadRunner;
-import de.jensnistler.routemap.helper.ViewGroupRotate;
-import de.jensnistler.routemap.helper.ViewGroupRouteMap;
+import de.jensnistler.trackmap.R;
+import de.jensnistler.trackmap.helper.GPSUpdateHandler;
+import de.jensnistler.trackmap.helper.GPXParser;
+import de.jensnistler.trackmap.helper.LocationThreadRunner;
+import de.jensnistler.trackmap.helper.ViewGroupRotate;
+import de.jensnistler.trackmap.helper.ViewGroupTrackMap;
 
 public class Map extends MapActivity implements LocationListener {
     public static final String BRIGHTNESS_NOCHANGE = "nochange";
@@ -73,7 +73,7 @@ public class Map extends MapActivity implements LocationListener {
 
     private MapView mMapView;
     private ViewGroupRotate mMapViewGroup;
-    private ViewGroupRouteMap mViewGroup;
+    private ViewGroupTrackMap mViewGroup;
     private RelativeLayout mImageViewGroup;
     private LocationManager mLocationManager;
     private double mLatitude;
@@ -114,7 +114,7 @@ public class Map extends MapActivity implements LocationListener {
         mMapViewGroup = new ViewGroupRotate(this);
         mMapViewGroup.addView(mMapView);
 
-        mViewGroup = new ViewGroupRouteMap(this);
+        mViewGroup = new ViewGroupTrackMap(this);
         mViewGroup.addView(mMapViewGroup);
 
         // position marker

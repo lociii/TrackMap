@@ -1,11 +1,11 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
-public class ViewGroupRouteMap extends ViewGroup {
-    public ViewGroupRouteMap(Context context) {
+public class ViewGroupTrackMap extends ViewGroup {
+    public ViewGroupTrackMap(Context context) {
         super(context);
     }
 

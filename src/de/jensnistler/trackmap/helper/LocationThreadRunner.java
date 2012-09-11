@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import android.os.Handler;
 import android.os.Message;

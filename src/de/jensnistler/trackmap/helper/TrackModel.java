@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 public class TrackModel {
     public final static Integer TYPE_MY_TRACKS = 1;

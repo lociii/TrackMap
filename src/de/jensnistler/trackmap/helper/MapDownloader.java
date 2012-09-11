@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import de.jensnistler.routemap.R;
+import de.jensnistler.trackmap.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

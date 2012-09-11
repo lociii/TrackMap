@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import de.jensnistler.routemap.R;
+import de.jensnistler.trackmap.R;
 
 public class MapAdapter extends ArrayAdapter<MapModel> {
     private ArrayList<MapModel> mItems;

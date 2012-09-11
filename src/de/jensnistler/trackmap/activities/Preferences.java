@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.activities;
+package de.jensnistler.trackmap.activities;
 
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
@@ -7,7 +7,7 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.PreferenceActivity;
-import de.jensnistler.routemap.R;
+import de.jensnistler.trackmap.R;
 
 public class Preferences extends PreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {

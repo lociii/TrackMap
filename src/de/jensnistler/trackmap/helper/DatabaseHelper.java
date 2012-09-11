@@ -1,11 +1,11 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
-    public static final String dbName = "RouteMap";
+    public static final String dbName = "TrackMap";
     public static final String mapTable = "Maps";
     public static final String trackTable = "Tracks";
     public static final String colKey = "Key";

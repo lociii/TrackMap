@@ -1,13 +1,13 @@
-package de.jensnistler.routemap.activities;
+package de.jensnistler.trackmap.activities;
 
-import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.fragments.TrackListAbstract;
-import de.jensnistler.routemap.fragments.TrackListOwn;
-import de.jensnistler.routemap.fragments.TrackListNotepad;
-import de.jensnistler.routemap.helper.TabManager;
-import de.jensnistler.routemap.helper.TrackAdapter;
-import de.jensnistler.routemap.helper.TrackDataSource;
-import de.jensnistler.routemap.helper.TrackListUpdater;
+import de.jensnistler.trackmap.R;
+import de.jensnistler.trackmap.fragments.TrackListAbstract;
+import de.jensnistler.trackmap.fragments.TrackListNotepad;
+import de.jensnistler.trackmap.fragments.TrackListOwn;
+import de.jensnistler.trackmap.helper.TabManager;
+import de.jensnistler.trackmap.helper.TrackAdapter;
+import de.jensnistler.trackmap.helper.TrackDataSource;
+import de.jensnistler.trackmap.helper.TrackListUpdater;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;

@@ -22,7 +22,7 @@
      to come from a domain that you own or have control over.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="de.jensnistler.routemap"
+    package="de.jensnistler.trackmap"
     android:versionCode="1"
     android:versionName="1.0" >
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -61,7 +61,7 @@
             android:label="@string/preferences" >
         </activity>
         <activity
-            android:name=".activities.LoadTrack"
+            android:name="de.jensnistler.trackmap.activities.LoadTrack"
             android:label="@string/loadTrackFromGpsies" >
         </activity>
     </application>

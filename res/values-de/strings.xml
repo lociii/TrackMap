@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="applicationName">RouteMap</string>
+    <string name="applicationName">TrackMap</string>
     <string name="noMaps">Keine Karten gefunden</string>
     <string name="noTracks">Keine Strecken gefunden</string>
     <string name="missingGpsiesUsername">Bitte gib Deinen gpsies.com Benutzernamen an</string>

@@ -1,11 +1,11 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
 
-import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.activities.Map;
+import de.jensnistler.trackmap.R;
+import de.jensnistler.trackmap.activities.Map;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,8 +17,8 @@ import android.content.DialogInterface.OnCancelListener;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
-import de.jensnistler.routemap.R;
-import de.jensnistler.routemap.activities.Map;
+import de.jensnistler.trackmap.R;
+import de.jensnistler.trackmap.activities.Map;
 
 public class TrackDownloader extends AsyncTask<TrackModel, Integer, Integer> {
     private boolean mRunning = true;

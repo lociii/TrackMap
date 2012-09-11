@@ -1,6 +1,6 @@
-package de.jensnistler.routemap.fragments;
+package de.jensnistler.trackmap.fragments;
 
-import de.jensnistler.routemap.helper.TrackModel;
+import de.jensnistler.trackmap.helper.TrackModel;
 
 public class TrackListOwn extends TrackListAbstract {
     protected Integer getType() {

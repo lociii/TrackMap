@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.activities;
+package de.jensnistler.trackmap.activities;
 
 import java.io.File;
 /*
@@ -20,7 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
-import de.jensnistler.routemap.R;
+import de.jensnistler.trackmap.R;
 
 public class Main extends Activity implements LocationListener {
     private Button mStep1Button;

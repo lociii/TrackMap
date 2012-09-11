@@ -1,4 +1,4 @@
-package de.jensnistler.routemap.helper;
+package de.jensnistler.trackmap.helper;
 
 import java.net.URL;
 
@@ -13,7 +13,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import de.jensnistler.routemap.R;
+import de.jensnistler.trackmap.R;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
