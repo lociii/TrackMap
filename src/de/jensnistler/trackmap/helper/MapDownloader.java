@@ -119,7 +119,13 @@ public class MapDownloader extends AsyncTask<MapModel, Integer, Integer> {
     }
 
     protected void onPostExecute(Integer count) {
-        mDialog.dismiss();
+        try {
+            mDialog.dismiss();
+            mDialog = null;
+        }
+        catch (Exception e) {
+            // activity is already finished
+        }
 
         // finish keep screen on while downloading
         mContext.getWindow().clearFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
