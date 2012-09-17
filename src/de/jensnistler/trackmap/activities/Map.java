@@ -276,7 +276,7 @@ public class Map extends MapActivity implements LocationListener {
     }
 
     private void handlePreferenceDim() {
-        if (true == mPreferenceStandby && mPreferenceDim != DIM_NEVER) {
+        if (true == mPreferenceStandby && !mPreferenceDim.equals(DIM_NEVER)) {
             mHandler.postDelayed(mDimRunnable, Integer.parseInt(mPreferenceDim) * 1000L);
         }
         else {
