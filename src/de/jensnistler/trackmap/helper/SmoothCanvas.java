@@ -1,7 +1,5 @@
 package de.jensnistler.trackmap.helper;
 
-import javax.microedition.khronos.opengles.GL;
-
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.DrawFilter;
@@ -21,10 +19,6 @@ final class SmoothCanvas extends Canvas {
 
     public void setBitmap(Bitmap bitmap) {
         delegate.setBitmap(bitmap);
-    }
-
-    public void setViewport(int width, int height) {
-        delegate.setViewport(width, height);
     }
 
     public boolean isOpaque() {
@@ -153,10 +147,6 @@ final class SmoothCanvas extends Canvas {
 
     public void setDrawFilter(DrawFilter filter) {
         delegate.setDrawFilter(filter);
-    }
-
-    public GL getGL() {
-        return delegate.getGL();
     }
 
     public boolean quickReject(RectF rect, EdgeType type) {
