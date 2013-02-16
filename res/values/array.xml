@@ -6,7 +6,7 @@
         <item>@string/brightnessMedium</item>
         <item>@string/brightnessMinimum</item>
     </string-array>
-    <string-array name="brightnessValues">
+    <string-array name="brightnessValues" translatable="false">
         <item>nochange</item>
         <item>maximum</item>
         <item>medium</item>
@@ -18,7 +18,7 @@
         <item>@string/dim30</item>
         <item>@string/dim60</item>
     </string-array>
-    <string-array name="dimValues">
+    <string-array name="dimValues" translatable="false">
         <item>never</item>
         <item>15</item>
         <item>30</item>
@@ -28,7 +28,7 @@
         <item>@string/kilometers</item>
         <item>@string/miles</item>
     </string-array>
-    <string-array name="distanceValues">
+    <string-array name="distanceValues" translatable="false">
         <item>km</item>
         <item>mi</item>
     </string-array>
